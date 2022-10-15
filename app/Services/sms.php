@@ -5,11 +5,11 @@ use CodeIgniter\Model;
 use CodeIgniter\HTTP\RequestInterface;
 
 class sms {
-    protected   $SignName = '一贸通外贸服务';
+    protected   $SignName = '进出口报关';
 
     protected  $AccessKeyId = '123456789';
 
-    protected  $SecretKey = '098765432Q';
+    protected  $SecretKey = '0987654321';
 
     protected  $template = [
         'SMS_56570279'=>['param'=>['code','product'],'name'=>'身份验证验证码'],    //验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！
