@@ -43,7 +43,7 @@ class Autocomplete extends Base {
                 ->from('goods as a',true)
                 ->join('project as b','a.projectid=b.id')
                 ->search($P)
-                ->orderBy('b.createtime','desc')
+                ->orderBy('b.BusinessID','desc')
                 ->whereAuth('a.customerid','a.companyid')
                 ->findAll(10);
 
@@ -57,7 +57,7 @@ class Autocomplete extends Base {
                 ->join('invoicer as c', 'a.invoicerid=c.id', 'left')
                 ->join('project as d','a.projectid=d.id')
                 ->search($P)
-                ->orderBy('d.createtime','desc')
+                ->orderBy('d.BusinessID','desc')
                 ->whereAuth('a.customerid','a.companyid')
                 ->findAll(10);
 
@@ -70,7 +70,7 @@ class Autocomplete extends Base {
                 ->join('project as b','a.projectid=b.id')
                 ->search($P)
                 ->whereAuth('a.customerid','a.companyid')
-                ->orderBy('b.createtime','desc')
+                ->orderBy('b.BusinessID','desc')
                 ->findAll(10);
 
             // 付款情况
@@ -81,7 +81,7 @@ class Autocomplete extends Base {
                 ->from('payment as a',true)
                 ->join('project as b','a.projectid=b.id')
                 ->search($P)
-                ->orderBy('b.createtime','desc')
+                ->orderBy('b.BusinessID','desc')
                 ->whereAuth('a.customerid','a.companyid')
                 ->findAll(10);
 

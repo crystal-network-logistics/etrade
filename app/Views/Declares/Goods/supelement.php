@@ -13,8 +13,7 @@
     <tr>
         <td>监管条件</td>
         <td><?=$model['customsupervision']?></td>
-        <td></td>
-        <td></td>
+        <td colspan="2"></td>
     </tr>
 
     <?php if( $model['supelement'] ) :?>
