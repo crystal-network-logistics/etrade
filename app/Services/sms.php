@@ -7,9 +7,9 @@ use CodeIgniter\HTTP\RequestInterface;
 class sms {
     protected   $SignName = '一贸通外贸服务';
 
-    protected  $AccessKeyId = 'LTAIoZ2kOMnD0Zi8';
+    protected  $AccessKeyId = '123456789';
 
-    protected  $SecretKey = 'obNhlu2x4SDDTlms8bt5vLEu2rjtbK';
+    protected  $SecretKey = '098765432Q';
 
     protected  $template = [
         'SMS_56570279'=>['param'=>['code','product'],'name'=>'身份验证验证码'],    //验证码${code}，您正在进行${product}身份验证，打死不要告诉别人哦！
