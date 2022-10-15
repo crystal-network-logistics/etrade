@@ -1,0 +1,29 @@
+.basicinfoleft{float:left;margin-right:20px;}
+.statisticsleft{margin-right:30px;}
+.sm{font-size: 12px;}
+.yellow{background-color: #ffff00;color: #f01515}
+.popover-title{color: #000;}
+
+div[name=cld] {border-radius: 5px;border: 1px solid white;}
+div[name=cld]:hover{  background-color: #f3f1f1;border: 1px solid rgb(175,204,238)}
+.form-group label{font-weight: bold;}
+.customtextbox{margin-right:10px;}
+.customrow{overflow:auto;margin-bottom:10px;}
+.customtextbox input , select , .customrow input select ,.customrow table>tbody>tr>td>input{border: 1px solid #eee; padding: 3px 5px; border-radius: 2px;}
+.idblock{background-color:rgb(175,204,238);float:left;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}
+.productname{padding-left:20px;padding-top:5px;float:left;}
+.linkarea{float:right;padding-top:10px;}
+.link{margin-left:10px;margin-right:10px;}
+.stats{margin-right:20px;}
+.hidden{display:none;}
+.red{color: red;}
+.z_photo{padding:0px;border: 0px;}
+.mini>.up-section{width: 40px;height: 40px;}
+.form-group{margin-bottom: 10px;}
+.panel-heading {padding: 10px 20px;}
+.mini>.min_up>.z_photo{padding:0px;border: 0px;}
+.mini>.min_up>.upimg-div .up-section{width: 40px;height: 40px;}
+.form-group{margin-bottom: 10px;}
+.min_up.min_up>.img-box{margin-bottom: 5px;}
+.entity .row{padding: 2px 0px;}
+.entity span.text-primary{font-weight: bold;}

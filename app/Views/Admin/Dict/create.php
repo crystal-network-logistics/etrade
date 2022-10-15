@@ -1,0 +1,1 @@
+<?=view('/Admin/Dict/_form')?>

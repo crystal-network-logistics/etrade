@@ -1,0 +1,14 @@
+var __CURRENCY={};
+   __CURRENCY["USD"]={"name":"USD","hidden":0};
+   __CURRENCY["EUR"]={"name":"EUR","hidden":0};
+   __CURRENCY["SDG"]={"name":"SDG","hidden":0};
+   __CURRENCY["SEK"]={"name":"SEK","hidden":0};
+   __CURRENCY["NZD"]={"name":"NZD","hidden":0};
+   __CURRENCY["CHF"]={"name":"CHF","hidden":0};
+   __CURRENCY["CAD"]={"name":"CAD","hidden":0};
+   __CURRENCY["AUD"]={"name":"AUD","hidden":0};
+   __CURRENCY["AED"]={"name":"AED","hidden":0};
+   __CURRENCY["HKD"]={"name":"HKD","hidden":0};
+   __CURRENCY["CNY"]={"name":"CNY","hidden":0};
+   __CURRENCY["JPY"]={"name":"JPY","hidden":0};
+   __CURRENCY["GBP"]={"name":"GBP","hidden":0};

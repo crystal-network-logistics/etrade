@@ -1,0 +1,9 @@
+var __CSOURCE={};
+   __CSOURCE["BD"]={"name":"百度","hidden":0};
+   __CSOURCE["360"]={"name":"360","hidden":0};
+   __CSOURCE["FB"]={"name":"福步","hidden":0};
+   __CSOURCE["ZH"]={"name":"展会","hidden":0};
+   __CSOURCE["TJ"]={"name":"客户推荐","hidden":0};
+   __CSOURCE["OD"]={"name":"其他","hidden":0};
+   __CSOURCE["QQ"]={"name":"QQ群","hidden":0};
+   __CSOURCE["TEL"]={"name":"电话","hidden":0};
