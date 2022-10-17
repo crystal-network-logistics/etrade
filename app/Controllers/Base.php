@@ -17,6 +17,8 @@ namespace App\Controllers;
 use App\Services\comm;
 use CodeIgniter\Controller;
 use Config\Services;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class Base extends Controller {
 	/**
@@ -210,23 +212,29 @@ class Base extends Controller {
 
     // 邮件发送
     protected function sent_mail($options = []){
-        $email = \Config\Services::email([
-            'wordWrap'=>true,
-            'SMTPHost'=>'smtp.mxhichina.com',
-            'SMTPUser'=>'admin@yimaotong.net',
-            'SMTPPass'=>'Asd12345',
-            'SMTPPort'=>'465',
-            //'protocol'=>'smtp',
-            'protocol'=>'mail',
-            'mailType'=>'html'
-        ]);
-        log_message('error',json_encode($options));
-
-        return $email
-            ->setSubject($options->subject)
-            ->setMessage($options->message)
-            ->setFrom($options->from??$email->SMTPUser)
-            ->setTo($options->to)
-            ->send();
+        $resp = false;
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();                                            // Send using SMTP
+            $mail->Host       = 'smtp.mxhichina.com';                   // Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+            $mail->Username   = 'admin@yimaotong.net';                  // SMTP username
+            $mail->Password   = 'Asd12345,';                            // SMTP password
+            $mail->SMTPSecure = 'ssl';                                  // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            $mail->Port       = 465;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+            $mail->CharSet='UTF-8';
+            //Recipients
+            $mail->setFrom('admin@yimaotong.net', '一贸通');
+            $mail->addAddress( $options["to"]);     // Add a recipient
+            // Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = $options["subject"];
+            $mail->Body    = $options["body"];
+            $resp = $mail->send();
+        }
+        catch ( Exception $ex ){
+            log_message('error',"sent_mail:$mail->ErrorInfo");
+        }
+        return $resp;
     }
 }

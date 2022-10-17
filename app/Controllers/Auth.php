@@ -140,27 +140,45 @@ class Auth extends Base
         return view('forget');
     }
 
+    // 忘记密码
+    public function passwd( $token = '' ){
+        $db = new \App\Models\Admin\Users();
+        if ( $data = $db->where('token',$token)->asArray()->first() ) {
+            if ( $this->request->getMethod() == 'post' ) {
+                $P = $this->U();
+                if ( strlen($P['newpasswd']) < 6 ) return $this->setError('密码长度小于6位');
+                if ( $P['newpasswd'] != $P['repasswd'] ) return $this->setError('两次输入密码不一致');
+                if ( $db->save(['id' => $data['id'] , 'password' => $P['password'] , 'token' => null]) ) {
+                    return $this->toJson('已重置成功');
+                }
+                return $this->setError('密码重置失败!');
+            }
+        } else {
+            exit('页面出错了~');
+        }
+
+        return view('passwd',['token' => $token,'data' => $data]);
+    }
+
     // 发送邮件
     public function send(){
         $email = $this->U('email');
         $db = new \App\Models\Admin\Users();
         if ( !$email ) return $this->setError('请填写正确的邮箱地址!');
-
-        if ( $db->where('email',$email)->first() ) {
-            $token = create_guid();
-            //$this->sent_mail();
-            $url = base_url()."/passwd/$token";
-            $config = [
-                'subject' => '一贸通密码重置',
-                'message' => "您好 $email , <br /> 请点击进入链接重置密码:<a href='$url' target='_blank'>$url</a>",
-                'to' => $email
-            ];
-
-            if ( $this->sent_mail((object) $config) ) {
-                return $this->toJson("重置链接已发送至: $email , 请登录邮箱进行重置!");
-            }
+        if ($data = $db->where('email',$email)->asArray()->first() ) {
+                $token = create_guid();
+                $url = base_url()."/passwd/$token";
+                $config = [
+                    'subject' => '一贸通密码重置',
+                    'body' => "您好 $email , <br /> 请点击进入链接重置密码:<a href='$url' target='_blank'>$url</a>",
+                    'to' => $email
+                ];
+                if ( $this->sent_mail($config) ) {
+                    $db->set('token',$token)->where('id',$data["id"])->update();
+                    return $this->toJson("重置链接已发送至: $email , 请登录邮箱进行重置!");
+                }
+                return $this->setError('发送失败');
         }
-
         return $this->setError('发送失败, 邮箱地址没有被注册绑定');
     }
 }

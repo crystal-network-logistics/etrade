@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="text-center">
-                            <a href="/login"> 我有密码 </a> | <a href="/register"> 注册帐户 </a>
+                            <a href="/login"> 我有密码 </a> | <a href="/login"> 注册帐户 </a>
                         </div>
 
                     </div>

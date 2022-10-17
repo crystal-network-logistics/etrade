@@ -105,7 +105,7 @@
                                                     <div class="ax-flex-block">
                                                         <label class="ax-checkbox"><input name="free_agree" type="checkbox"><span>记住密码</span></label>
                                                     </div>
-                                                    <a href="###" class="ax-form-txt ax-color-ignore">忘记了密码？</a>
+                                                    <a href="/forget" class="ax-form-txt ax-color-ignore">忘记了密码？</a>
                                                 </div>
                                             </div>
                                         </div>

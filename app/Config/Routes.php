@@ -28,7 +28,7 @@ $routes->add('logout', 'Home::logout');
 
 $routes->add('register', 'Auth::register');
 $routes->add('forget', 'Auth::forget');
-$routes->add('repasswd', 'Auth::repasswd');
+$routes->add('passwd/(:any)', 'Auth::passwd/$1');
 
 $routes->group('upload',function ($routes){
     $routes->add('dofile', 'Comm\Upload::dofile');
