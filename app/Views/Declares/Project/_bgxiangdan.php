@@ -68,7 +68,7 @@ $stamper_png = base64_image_data( $company->stamp_zh_en );
                 <?=$i?>
             </td>
             <td align="left" style="border-right:1px solid black;<?=$i==$t?'padding-bottom:50px':''?>">
-                <?= $row->name.' '.$row->ProductEnglishName;?>
+                <?= $row->name.' '.$row->ProductEnglishName?:$row->englishname;?>
             </td>
             <td align="left" style="border-right:1px solid black;<?=$i==$t?'padding-bottom:50px':''?>">
                 <?=$row->ProductAmount.' '.(is_numeric($row->productunit)?(\App\Libraries\LibComm::Unit($row->productunit)):$row->productunit)?>

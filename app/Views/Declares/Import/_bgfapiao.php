@@ -82,7 +82,7 @@ $domestic = (object) get_overseas($entry->domesticid);
             <td align="left" style="border-left:1px solid black;border-right:1px solid black;width:20px">
                 <?=$i?>
             </td>
-            <td align="left" style="border-right:1px solid black"><?php echo $row->ProductEnglishName;?></td>
+            <td align="left" style="border-right:1px solid black"><?php echo $row->ProductEnglishName?:$row->englishname;?></td>
             <td align="left" style="border-right:1px solid black"><?=$row->ProductAmount. '  '. (is_numeric($row->productunit)?(\App\Libraries\LibComm::Unit($row->productunit)):$row->productunit) ?></td>
             <td align="left" style="border-right:1px solid black"><?=number_format($row->ProductUnitPrice,4)?></td>
             <td align="right" style="border-right:1px solid black"><?php $tmp=$row->ProductUnitPrice*$row->ProductAmount; $total+=$tmp; echo number_format($tmp,2); ?></td>

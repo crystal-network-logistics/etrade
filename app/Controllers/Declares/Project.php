@@ -772,7 +772,11 @@ class Project extends Base
                 ->from('entryform as a',true)
                 ->join('overseas as b','a.businessid=b.id','left')
                 ->where('a.projectid',$form['id'])->first();
-        $data["goods"] = $db->select('a.*,ifnull( a.supelement,b.supelement ) as supelement ,b.hscode,a.id as gid,a.ProductChineseName as name,a.productid as pid,c.name as invoicer,c.domesticsource')
+        $data["goods"] = $db->select('
+                a.*,
+                b.englishname,
+                ifnull( a.supelement,b.supelement ) as supelement ,b.hscode,a.id as gid,
+                a.ProductChineseName as name,a.productid as pid,c.name as invoicer,c.domesticsource')
                 ->from('goods as a',true)
                 ->join('products as b','a.productid=b.id','left')
                 ->join('invoicer as c' , 'b.invoicerid=c.id','left')

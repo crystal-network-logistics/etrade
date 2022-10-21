@@ -93,7 +93,7 @@ class Auth extends Base
                     // 保存验证码
                     $sms->create_very_code( $code,$customer_data['phone'],$this->request );
                     // 发送短信
-                    //$sms->send_verify($customer_data['phone'],'SMS_57190146',[$code,'一贸通']);
+                    $sms->send_verify($customer_data['phone'],'SMS_57190146',[$code,'一贸通']);
                     return $this->toJson('短信已发送,请注意查收!');
                 }
             }
@@ -125,7 +125,8 @@ class Auth extends Base
                     // 保存验证码
                     $sms->create_very_code( $code,$P['phone'],$this->request );
                     // 发送短信
-                    //$sms->send_verify($customer_data['phone'],'SMS_56570272',[$code,'一贸通']);
+                    $sms->send_verify($customer_data['phone'],'SMS_56570272',[$code,'一贸通']);
+                    //
                     return $this->toJson('短信已发送,请注意查收!');
                 }
             }

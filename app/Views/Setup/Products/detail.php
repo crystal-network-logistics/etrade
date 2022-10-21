@@ -101,7 +101,7 @@
 <?php endif;?>
 <script>
     function  get_invoicer_choice(){
-        var data = comm.doChoice(data_choice_tb);
+        var data = comm.doChoice( data_choice_tb );
         return comm.doRequest('/setup/products/bind_invoicer',{id:'<?=$model['id']?>',invoicerid:data.id},( resp )=>{
             comm.Alert(resp.msg,resp.code);
             $('.spInvoice').html(data.name);

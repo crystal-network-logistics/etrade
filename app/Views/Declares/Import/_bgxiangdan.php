@@ -64,7 +64,7 @@ $domestic = (object) get_overseas( $entry->domesticid );
                 <?=$i?>
             </td>
             <td align="left" style="border-right:1px solid black;<?=$i==$t?'padding-bottom:50px':''?>">
-                <?php echo $row->ProductEnglishName;?>
+                <?php echo $row->ProductEnglishName?:$row->englishname;?>
             </td>
             <td align="left" style="border-right:1px solid black;<?=$i==$t?'padding-bottom:50px':''?>">
                 <?=$row->ProductAmount.' '.(is_numeric($row->productunit)?(\App\Libraries\LibComm::Unit($row->productunit)):$row->productunit)?>

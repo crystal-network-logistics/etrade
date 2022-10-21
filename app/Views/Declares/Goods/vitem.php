@@ -16,7 +16,7 @@
                 <div class="customrow" style="padding-left:20px;padding-right:20px">
                     <span class="customtextbox"> <span class="text-semibold">品牌:</span> <?=$row["brand"]?> </span>
                     <span class="customtextbox"> <span class="text-semibold">型号:</span> <?=$row["model"]?> </span>
-                    <span class="customtextbox"> <span class="text-semibold">英文名:</span> <?=$row["ProductEnglishName"]?></span>
+                    <span class="customtextbox"> <span class="text-semibold">英文名:</span> <?=$row["ProductEnglishName"]?:$row["englishname"]?></span>
                     <span class="customtextbox"> <span class="text-semibold">原产国:</span> <?=App\Libraries\Libcomp::get_dict('COUNTRY',$row["region"]?:142)?></span>
                     <span class="customtextbox"> <span class="text-semibold">品牌类型:</span> <?=App\Libraries\Libcomp::get_dict('BRANDS',$row["brandtype"])?></span>
                     <span class="customtextbox"> <span class="text-semibold">出品享惠情况:</span> <?=App\Libraries\Libcomp::get_dict('YHQK',$row["yhqk"])?></span>

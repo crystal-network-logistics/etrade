@@ -80,33 +80,6 @@
     <!-- /page content -->
 
 </div>
-
-<script>
-
-    $('.frm_passwd').toSubmit({
-        rules : {
-            repasswd: {
-                equalTo: "#newpasswd"
-            }
-        },
-        messages : {
-            repasswd : {
-                equalTo:'两次密码输入不一致'
-            }
-        },
-        success : function (resp) {
-            comm.Alert(resp.msg);
-            if ( resp.code ) {
-                setTimeout(()=>{
-                    window.location.href = '/login'
-                },3000);
-            }
-        },
-        error : function (resp) {
-            comm.Alert(resp.msg,false)
-        }
-    })
-</script>
-
+<script>$('.frm_passwd').toSubmit({rules : {repasswd: {equalTo: "#newpasswd"}},messages : {repasswd : {equalTo:'两次密码输入不一致'}},success : function (resp) {comm.Alert(resp.msg);if ( resp.code ) { setTimeout(()=>{window.location.href = '/login'},3000);}},error : function (resp) {comm.Alert(resp.msg,false)}});</script>
 </body>
 </html>

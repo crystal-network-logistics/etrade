@@ -120,7 +120,7 @@ $is_has_off_shelves = ck_action('setup/products/off_shelves');
                             <?php endif;?>
 
                             <?php if($is_has_delete):?>
-                            if(status == 0) {
+                            if( status == 0 ) {
                                 buttons += `    <a href="/setup/products/delete?id=${full.id}" class="label bg-danger" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
                             }
                             <?php endif;?>

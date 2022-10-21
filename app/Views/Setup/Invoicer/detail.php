@@ -76,7 +76,7 @@
         <td colspan="3">
             <?php if($model['products']) :?>
             <?php foreach ( $model['products'] as $k=>$item) :?>
-            <label class="label bg-grey-300"> <?=$item['name']?> ( HS: <?=$item['hscode']?> )</label>
+                <span class="label bg-grey-300"> <?=$item['name']?> ( HS: <?=$item['hscode']?> )</span>
             <?php endforeach;?>
             <?php endif;?>
         </td>

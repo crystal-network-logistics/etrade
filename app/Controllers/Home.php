@@ -4,6 +4,7 @@ use App\Controllers\Base;
 use App\Libraries\LibComp;
 use App\Libraries\LibMenu;
 use App\Services\comm;
+use CodeIgniter\Config\Services;
 
 class Home extends Base
 {
@@ -77,6 +78,6 @@ class Home extends Base
     }
 
     public function test(){
-        echo base_url();
+        echo phpinfo();
     }
 }

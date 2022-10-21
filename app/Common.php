@@ -119,36 +119,28 @@ function check_action($userId = 0,string $uri){
  * */
 function where_auth(){
     $db = new \App\Models\Admin\Users();
-    $power =  session('power') ;
     $Ids = [];
-    $data = $db->asArray()->where('id',session('id'))->first();
-
     if ( ckAuth() ) {
         $Ids[] = session('custId');
-    }
-    //if ( hasRole('operator') ) {
-    else if ( in_array( $data['power'] , ['operator','owner'])) {
-        $operator_data = $db->asArray()->from('operator',true)->where('userid',session('id'))->findAll();
+    } else if ( $operator_data = $db->asArray()->from('operator',true)->where('userid',session('id'))->findAll() ) {
         foreach ( $operator_data as $item ) {
             $Ids[] = $item['customerid'];
         }
-    }
-
-    // if ( hasRole(['admin','finance','invoicer','sa']) ) {
-    else if ( in_array( $power ,['admin','finance','invoicer','sa'] ) ) {
-        $customer_data = $db->asArray()->from('customer',true)->where('companyid', session('company') )->findAll();
-        foreach ( $customer_data as $item ) {
-            $Ids[] = $item['id'];
+    } else {
+        if ( session('company') ) {
+            $customer_data = $db->asArray()->from('customer', true)->where('companyid', session('company'))->findAll();
+            foreach ($customer_data as $item) {
+                $Ids[] = $item['id'];
+            }
         }
     }
-
+    log_message('error',"auth:".$db->getLastQuery());
     return $Ids;
 }
 
 // 判断用户角色职位
 function ckAuth( $auth = 'customer'){
-    if ( $auth !== false && $auth == 'customer' )
-        return session('power') === $auth;
+    if ( $auth !== false && $auth == 'customer' ) return session('power') === $auth;
 
     if ( $auth === false ) {
         return hasRole(['admin','finance','operator','invoicer','sa']);
@@ -160,21 +152,19 @@ function ckAuth( $auth = 'customer'){
 function hasRole( $code ,$userId = 0 ){
     $db = new \App\Models\Admin\Roles();
     $self = session('id') == $userId;
-    if ( session('power') == 'all' || session('power') == 'admin') return true;
-
-    if ( $self && session('Roles') ) {
-        $data = session('Roles');
-    } else {
-        is_array( $code ) ? $db->whereIn('a.code',$code ) : $db->where('a.code',$code );
-        $data = $db->from('admin_roles as a', true)
-            ->join('admin_users_role as b', 'a.id=b.role_id', 'left')
-            ->where(['b.user_id' => $userId ?: session('id')])->first();
-        if ( $self ) {
-            $session = \CodeIgniter\Config\Services::session(); $session->set('Roles' , $data);
-        }
-    }
+    if ( in_array(session('power'),['all','admin','sa']) ) return true;
+    is_array( $code ) ? $db->whereIn('a.code',$code ) : $db->where('a.code',$code );
+    $data = $db->from('admin_roles as a', true)->join('admin_users_role as b', 'a.id=b.role_id', 'left')
+        ->where(['b.user_id' => $userId ?: session('id')])->first();
 
     return ( $data ) ? true : false;
+}
+
+function hasCustom( $custId = 0 ) {
+    if ( session('power') == 'all' || session('power') == 'admin' || ckAuth() )
+        return true;
+    $db = new \App\Models\Setup\Operator();
+    return $db->where(['userid' => session('id') , 'customerid' => $custId])->first();
 }
 
 
@@ -197,28 +187,21 @@ function create_guid($namespace = '') {
     return strtolower($guid);
 }
 // 下载
-function force_download($filename = '', $data = '', $set_mime = FALSE)
-{
-    if ($filename === '' OR $data === '')
-    {
-        return;
-    }
-    elseif ($data === NULL)
-    {
-        if ( ! @is_file($filename) OR ($filesize = @filesize($filename)) === FALSE)
-        {
+function force_download($filename = '', $data = '', $set_mime = FALSE) {
+    if ($filename === '' OR $data === '') return;
+
+    elseif ($data === NULL) {
+        if ( ! @is_file($filename) OR ($filesize = @filesize($filename)) === FALSE) {
             return;
         }
         $filepath = $filename;
         $filename = explode('/', str_replace(DIRECTORY_SEPARATOR, '/', $filename));
         $filename = end($filename);
     }
-    else
-    {
+    else {
         $filesize = strlen($data);
     }
 
-    // Set the default MIME type to send
     $mime = 'application/octet-stream';
 
     $x = explode('.', $filename);
@@ -226,32 +209,16 @@ function force_download($filename = '', $data = '', $set_mime = FALSE)
 
     if ($set_mime === TRUE)
     {
-        if (count($x) === 1 OR $extension === '')
-        {
-            /* If we're going to detect the MIME type,
-             * we'll need a file extension.
-             */
+        if (count($x) === 1 OR $extension === '') {
             return;
         }
 
-        // Load the mime types
-        //$mimes = \Config\Mimes::$mimes//[];//& ge();
-
-        // Only change the default MIME if we can find one
-        if (isset(\Config\Mimes::$mimes[$extension]))
-        {
+        if (isset(\Config\Mimes::$mimes[$extension])) {
             $mime = is_array(\Config\Mimes::$mimes[$extension]) ? \Config\Mimes::$mimes[$extension][0] : \Config\Mimes::$mimes[$extension];
         }
     }
 
-    /* It was reported that browsers on Android 2.1 (and possibly older as well)
-     * need to have the filename extension upper-cased in order to be able to
-     * download it.
-     *
-     * Reference: http://digiblog.de/2011/04/19/android-and-the-download-file-headers/
-     */
-    if (count($x) !== 1 && isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/Android\s(1|2\.[01])/', $_SERVER['HTTP_USER_AGENT']))
-    {
+    if (count($x) !== 1 && isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/Android\s(1|2\.[01])/', $_SERVER['HTTP_USER_AGENT'])) {
         $x[count($x) - 1] = strtoupper($extension);
         $filename = implode('.', $x);
     }
@@ -261,7 +228,6 @@ function force_download($filename = '', $data = '', $set_mime = FALSE)
         return;
     }
 
-    // Clean output buffer
     if (ob_get_level() !== 0 && @ob_end_clean() === FALSE)
     {
         @ob_clean();
@@ -275,15 +241,11 @@ function force_download($filename = '', $data = '', $set_mime = FALSE)
     header('Content-Length: '.$filesize);
     header('Cache-Control: private, no-transform, no-store, must-revalidate');
 
-    // If we have raw data - just dump it
-    if ($data !== NULL)
-    {
+    if ($data !== NULL) {
         exit($data);
     }
 
-    // Flush 1MB chunks of data
-    while ( ! feof($fp) && ($data = fread($fp, 1048576)) !== FALSE)
-    {
+    while ( ! feof($fp) && ($data = fread($fp, 1048576)) !== FALSE) {
         echo $data;
     }
 

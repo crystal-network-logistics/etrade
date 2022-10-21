@@ -99,16 +99,13 @@ class Invoicer extends Base
     // 详情
     public function detail(){
         $this->actionAuth(true);
-
         if (!$model = $this->ck_auth_data( $this->db , $form = $this->U() )) exit('参数错误');
 
         $db = new \App\Models\Setup\Products();
 
-        if ($model['products']) {
-            $products = explode(',', $model['products']);
-            $product_data = $db->whereIn('id', $products)->findAll();
-            $model['products'] = $product_data;
-        }
+        $product_data = $db->select('name,hscode')->distinct()->where('invoicerid', $this->U("id") )->findAll();
+        $model['products'] = $product_data;
+
         if ( $model['customerid'] ) {
             $customer_data = $db->from('customer',true)->where('id',$model['customerid'])->first();
             $model['customername'] = $customer_data ? $customer_data['customername'] : '--';

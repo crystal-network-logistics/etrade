@@ -243,16 +243,7 @@ function delete_notice( $argc ) {
 
 // 删除通知
 function delete_notify( $relationId , $topic , $receiverId = null,$type = '') {
-
     return delete_notice(['relationid' => $relationId, 'topickey' => $topic, 'receiverid' => $receiverId, 'type' => $type]);
-    /*
-    if (is_array($topic)) {
-        foreach ($topic as $key => $val) {
-            delete_notice(['relationid' => $relationId, 'topickey' => $val, 'receiverid' => $receiverId, 'type' => $type]);
-        }
-    } else {
-        delete_notice(['relationid' => $relationId, 'topickey' => $topic, 'receiverid' => $receiverId, 'type' => $type]);
-    }*/
 }
 
 // 批量删除通知

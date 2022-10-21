@@ -127,7 +127,7 @@
                     <button type="button" class="btn" onclick="bSubmit(0,'')"> 保存草稿 </button>
                     <?php endif;?>
 
-                    <?php if( ( ckAuth() || ((session('custId') == $model["customerid"] || hasRole('admin') ) && ($model["status"] == 0 || $model["status"] == 4))) || !$model ) { ?>
+                    <?php if( ( ckAuth() || (session('custId') == $model["customerid"] || hasRole('admin') || hasCustom( $model["customerid"] ) ) && ( $model["status"] == 0 || $model["status"] == 4 )) || !$model ) { ?>
                         <button type="button" class="btn btn-primary" onclick="bSubmit(1,'submits')">提交</button>
                     <?php } ?>
 

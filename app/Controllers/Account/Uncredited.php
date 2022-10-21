@@ -42,8 +42,7 @@ class Uncredited extends Base
         if ( $form["role"]) {
             $db = new \App\Models\Admin\Roles();
             if( $role_data = $db->asArray()->where('id',$form['role'])->first() ) {
-                $form['power'] = $role_data['code'];
-                $form['type'] = ( $form['power'] == 'customer' ) ? 'customer' : 'ent';
+                $form['power'] = $role_data['code']; $form['type'] = ( $form['power'] == 'customer' ) ? 'customer' : 'ent';
             }
         }
 

@@ -119,6 +119,7 @@ class Notify extends Base
             ->join('entryform b','a.relationid=b.id')
             ->join('project c','b.projectid=c.id','left')
             ->where('a.relationtb','entryform')
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
         return $data;
@@ -136,9 +137,10 @@ class Notify extends Base
             ->join('project c','b.projectid=c.id','left')
             ->join('customer f','c.customerid=f.id','left')
             ->where('a.relationtb','vii')
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
-        log_message('error',$this->db->getLastQuery());
+        //log_message('error',$this->db->getLastQuery());
         return $data;
     }
     // 收入数据
@@ -150,6 +152,7 @@ class Notify extends Base
             ->join('project c','b.projectid=c.id','left')
             ->join('customer d','b.customerid=d.id','left')
             ->where('relationtb','receipt')
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
         return $data;
@@ -164,9 +167,10 @@ class Notify extends Base
             ->join('project c','b.projectid=c.id','left')
             ->join('customer d','b.customerid=d.id','left')
             ->where('a.relationtb',$tb)
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
-        log_message('error',$this->db->getLastQuery());
+        //log_message('error',$this->db->getLastQuery());
         return $data;
     }
     // 盖章数据
@@ -178,6 +182,7 @@ class Notify extends Base
             ->join('project c','b.projectid=c.id','left')
             ->join('customer d','b.customerid=d.id','left')
             ->where('a.relationtb','stamp')
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
         return $data;
@@ -191,6 +196,7 @@ class Notify extends Base
             ->join('products b','a.relationid=b.id')
             ->where('a.relationtb','products')
             ->search( $form )
+            ->orderBy('a.createtime','desc')
             ->paginates($this->_page(),$this->_size());
         return $data;
     }
@@ -203,6 +209,7 @@ class Notify extends Base
             ->join('customer c','c.id=b.customerid','left')
             ->where('a.relationtb','invoicer')
             ->search( $form )
+            ->orderBy('a.createtime','desc')
             ->paginates($this->_page(),$this->_size());
         return $data;
     }
@@ -217,6 +224,7 @@ class Notify extends Base
             ->join('project d','b.projectid=d.id','left')
             ->where('a.relationtb','receiptclaim')
             ->search( $form )
+            ->orderBy('a.createtime','desc')
             ->paginates($this->_page(),$this->_size());
         return $data;
     }
@@ -228,6 +236,7 @@ class Notify extends Base
             ->from('notification a')
             ->join('users b','a.relationid=b.id')
             ->where('a.relationtb','users')
+            ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
         return $data;

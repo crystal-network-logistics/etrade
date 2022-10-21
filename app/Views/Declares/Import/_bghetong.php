@@ -57,7 +57,7 @@
             </td>
 
             <td align="left" style="border-left:1px solid black;border-right:1px solid black">
-                <?php echo $row->ProductEnglishName; ?>
+                <?php echo $row->ProductEnglishName?:$row->englishname; ?>
             </td>
 
             <td align="left" style="border-right:1px solid black"><?=$row->ProductAmount. ' '.(is_numeric($row->productunit)?(\App\Libraries\LibComm::Unit($row->productunit)):$row->productunit) ?></td>

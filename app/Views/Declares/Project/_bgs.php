@@ -119,7 +119,7 @@
     <?php $i = 1;?>
     <?php foreach($goods as $key=>$item) {
         $row = is_array($item) ? ((object) $item) : $item;
-        log_message('error',json_encode($row));
+        //log_message('error',json_encode($row));
         ?>
         <tr style="page-break-inside: avoid !important;">
             <td align="center" class="td" style="width: 5%"><?=$i?></td>

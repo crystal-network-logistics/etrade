@@ -97,60 +97,59 @@ $('.BGXS').change(function(){
 
     // 计算产品中产品数量
     function table_input_calc(){
-        var id, pkga, nw=0, gw=0, pa=0, puc=0.00, sum=0, item_sum=0;
-        var totalnw=0, totalpkga=0, totalgw=0, totalpa=0, totalsum=0;
+        var id, pkga, nw=0, gw=0, pa=0, puc=0.00, sum=0, item_sum=0; var totalnw=0, totalpkga=0, totalgw=0, totalpa=0, totalsum=0;
         $("div[name='div']").each(function(){
-                var id=$(this).attr("id");
-                if(!isNaN(parseFloat($('#nw'+id).val()))) {
-                nw = parseFloat($('#nw' + id).val());
+                var id = $(this).attr("id") , $nw = $('#nw'+id) , $gw = $('#gw'+id) , $pa = $('#pa'+id) , $puc = $('#puc'+id) , $sum = $('#sum'+id) , $pack = $('#pack'+id);
+                // 总净重
+                if(!isNaN(parseFloat( $nw.val() ))) {
+                    nw = parseFloat( $nw.val() );
                 }else {
                     nw = 0;
                 }
                 totalnw+=nw;
-                if(!isNaN(parseFloat($('#gw'+id).val())))
-                gw=parseFloat($('#gw'+id).val());
-                else
-                gw=0;
+                // 总毛重
+                if(!isNaN(parseFloat( $gw.val() )))
+                    gw = parseFloat($gw.val());
+                else gw = 0;
 
-                if(!isNaN(parseFloat($('#nw'+id).val()))&&!isNaN(parseFloat($('#gw'+id).val()))&&nw>gw) {
+                if(!isNaN(parseFloat( $nw.val())) && !isNaN( parseFloat( $gw.val())) && nw > gw) {
                     comm.dAlert('总净重不可以大于总毛重！');
                 }
-                totalgw+=gw;
-                if(!isNaN(parseFloat($('#pa'+id).val())))
-                pa=parseFloat($('#pa'+id).val());
-                else
-                pa=0;
-                totalpa+=pa;
-                if((!isNaN(parseFloat($('#puc'+id).val())) && $('#puc'+id).data('change') == 'true') || $('#pa'+id).data('change') == 'true'){
-                $('#puc'+id).data('change','false');
-                $('#pa'+id).data('change','flase');
-                puc = parseFloat($('#puc'+id).val());
-                item_sum=pa*puc;
-                }else{
-                    if(!isNaN(parseFloat($('#sum'+id).val())) && $('#sum'+id).data('change') == 'true'){
-                    $('#sum'+id).data('change','false');
-                    item_sum = parseFloat(clear($('#sum'+id).val()));
-                    if( pa ){
-                    puc = comm.fMoney((item_sum / pa),4);$('#puc'+id).val(puc);
-                }
-                }else{
-                    puc=parseFloat(clear($('#puc'+id).val()));
-                    if(first){  item_sum = clear($('#sum'+id).val()); }else{    item_sum = pa*puc; }
-                }
-            }
-            $('#sum'+id).val(comm.fMoney(item_sum,2));
 
-            totalsum +=  parseFloat($('#sum'+id).val().replace(',',''));
-            if(!isNaN(parseFloat($('#pack'+id).val())))
-                pkga=parseFloat($('#pack'+id).val());
-            else
-                pkga=0;
-            totalpkga+=pkga;
+                totalgw += gw;
+                // 产品数量
+                if(!isNaN(parseFloat( $pa.val() ))) pa=parseFloat( $pa.val());
+                else pa = 0;
+
+                totalpa += pa;
+                // 单价
+                if( (!isNaN( parseFloat( $puc.val() ) ) && $puc.data('change') == 'true' ) || $pa.data('change') == 'true'){
+                    $puc.data('change','false'); $pa.data('change','false');
+                    puc = parseFloat( $puc.val() );
+                    item_sum = pa * puc;
+                } else {
+                    if( !isNaN(parseFloat($sum.val()) ) && $sum.data('change') == 'true') {
+                        $sum.data('change','false');
+                        item_sum = parseFloat(clear($sum.val()));
+                        if( pa ){
+                            puc = comm.fMoney((item_sum / pa),4);$puc.val(puc);
+                        }
+                    }else{
+                        puc = parseFloat( clear($puc.val()) );
+                        if( first ){  item_sum = clear( $sum.val() ); }else{    item_sum = pa*puc; }
+                    }
+            }
+            $sum.val(comm.fMoney(item_sum,2));
+
+            totalsum +=  parseFloat( $sum.val().replace(',','') );
+            if(!isNaN(parseFloat($pack.val()))) pkga=parseFloat($pack.val());
+            else pkga=0;
+            totalpkga += pkga;
 
             if($('#officialunit'+id).val()=='千克')
-                $('#officialamount'+id).val($('#nw'+id).val());
+                $('#officialamount'+id).val($nw.val());
             else
-                $('#officialamount'+id).val($('#pa'+id).val());
+                $('#officialamount'+id).val($pa.val());
         });
         $('#totalpackageamount').val(totalpkga);
         $('#totalnw').text(totalnw+'kg');
@@ -162,8 +161,7 @@ $('.BGXS').change(function(){
 
     // 取消字符串中出现的所有逗号
     function clear(str) {
-        str = str.replace(/,/g, "");//
-        return str;
+        return str.replace(/,/g, "");
     }
     // 复制产品
     function clone_elem(id){

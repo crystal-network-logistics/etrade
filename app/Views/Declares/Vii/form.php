@@ -92,9 +92,8 @@
 
         $('#frm_vii select[name=productid]').change(function(){
             var data = $(this).find('option:selected').data('json');
-            console.log(data)
-            if(data == '' || data === undefined)
-                data = {invoicerid:0,invoicer:'',taxreturnrate:'',unit:''}
+            console.log(data);
+            if(data == '' || data === undefined) data = {invoicerid:0,invoicer:'',taxreturnrate:'',unit:''}
             comm.formload($('#frm_vii'),data);
         });
 

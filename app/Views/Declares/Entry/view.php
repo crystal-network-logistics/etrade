@@ -314,5 +314,9 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
         <?php if( ($entry["clearance"])) :?>
             <a class="btn btn-primary" href="/declares/project/viewfile?id=<?=$project["ID"]?>" target="_blank">查看通关单</a>
         <?php endif;?>
+
+        <?php if($data['entry']  && $entry["status"] != 5 ) {?>
+            <a class="btn btn-primary" href="/declares/project/downbooking?id=<?=$project["ID"]?>" target="_blank">下载托书</a>
+        <?php }?>
     </form>
 </div>
