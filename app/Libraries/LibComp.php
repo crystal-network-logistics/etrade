@@ -478,8 +478,10 @@ class LibComp
         }
         $argc = ['status'=>0,'password'=>$P,'activated'=>1];
         
-        if ( ck_mobile( $A ) )  $argc['tel'] = $A;
-        else if (ck_email( $A )) $argc['email'] = $A;
+        if ( ck_mobile( $A ) )
+            $argc['tel'] = $A;
+        else if (ck_email( $A ))
+            $argc['email'] = $A;
         else $argc['username'] = $A;
 
         return $argc;

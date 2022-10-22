@@ -52,7 +52,7 @@ class Home extends Base
             if (!$User->code || strtolower($User->code) != strtolower($_SESSION['authcode'])) return $this->setError('验证码不正确!');
             // 登录操作
             $resp = Login($User->username, $User->password, $this->request);
-
+            log_message('error','login:'.json_encode($resp));
             if(!is_array($resp)) return $this->setError('登录失败');
 
             if(!array_key_exists('code',$resp)) {

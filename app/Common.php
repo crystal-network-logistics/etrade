@@ -57,25 +57,25 @@ if(! function_exists('Login')){
      * @return array
      * */
     function Login( $A,$sPass,RequestInterface $request){
-        $model = new App\Models\Admin\Users();
+        $db = new App\Models\Admin\Users();
         $P = md5(decrypt($sPass));
         if(!$P)exit ('密码错误!');
         $RS = \App\Libraries\LibComp::U($A,$P);
-        if(( !$RS || !array_key_exists('code',$RS) ) && $M = $model->where( $RS )->first()    ) {
-            $session = \CodeIgniter\Config\Services::session();
-            $log = new \App\Models\Admin\LoginLogs();
-            $comm = new \App\Services\comm();
-            $ip = $request->getIPAddress();
-            // 登录日志
-            $log->save(['userId' => $M->id,'username' => $M->username,'ip' => $request->getIPAddress(),'ua' => $request->getUserAgent()]);
-            // 更新用户最后登录情况
-            $model->set('last_ip',$ip)->set('login_lasttime',date('Y-m-d H:i:s'))->where('id',$M->id)->update();
-            // 保存 session
-            $session->set(['id'=>$M->id, 'username'=>$M->username, 'name'=>($M->nickname?:$M->username),'post' => $M->post,'power' => $M->power ,'company'=>$M->companyid,'custId'=>$M->customerid??0]);
-            // 保存用户角色
-            $session->set('Roles',$comm->get_roles_data());
-
-            $RS = ['code'=>true,'msg'=>'登录成功!'];
+        if(( !$RS || !array_key_exists('code',$RS) ) ) {
+            if ($resp_data = $db->select('id,username,nickname,post,power,companyid,customerid,type')->where( $RS )->asArray()->first() ) {
+                $session = \CodeIgniter\Config\Services::session();$log = new \App\Models\Admin\LoginLogs();$comm = new \App\Services\comm();
+                $ip = $request->getIPAddress();
+                // 登录日志
+                $log->save(['userId' => $resp_data["id"], 'username' => $resp_data['username'], 'ip' => $request->getIPAddress(), 'ua' => $request->getUserAgent()]);
+                // 更新用户最后登录情况
+                $db->set('last_ip', $ip)->set('login_lasttime', date('Y-m-d H:i:s'))->where('id', $resp_data['id'])->update();
+                // 保存 session
+                $session->set(['id' => $resp_data['id'], 'username' => $resp_data['username'], 'name' => ($resp_data['nickname'] ?: $resp_data['username']), 'post' => $resp_data['post'], 'power' => $resp_data['power'], 'company' => $resp_data['companyid'], 'custId' => $resp_data['customerid'] ?: 0]);
+                // 保存用户角色
+                $session->set('Roles', $comm->get_roles_data());
+                //
+                $RS = ['code' => true, 'msg' => '登录成功!'];
+            }
         }
         return ($RS);
     }
@@ -134,7 +134,7 @@ function where_auth(){
             }
         }
     }
-    log_message('error',"auth:".$db->getLastQuery());
+    //log_message('error',"auth:".$db->getLastQuery());
     return $Ids;
 }
 
