@@ -79,7 +79,7 @@ class Products extends Base
     // 编辑
     public function edit(){
         $this->actionAuth(true);
-        if ( !$model = $this->ck_auth_data( $this->db , $this->U() ) ) exit('删除失败,参数错误');
+        if ( !$model = $this->ck_auth_data( $this->db , $this->U() ) ) exit('参数错误');
 
         $model['supelement'] = $model['supelement'] ? json_decode($model['supelement']) : [];
         $data['detail'] = $model;

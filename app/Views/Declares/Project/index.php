@@ -172,7 +172,7 @@ $is_has_delete = ck_action('declares/project/delete');
             if ( status == 2 ) {
                 comm.visibleColumn(dtproducts, 10, false);
                 comm.visibleColumn(dtproducts, 11, true);
-            } else{
+            } else {
                 comm.visibleColumn(dtproducts, 11, false);
                 comm.visibleColumn(dtproducts, 10, true);
             }
@@ -188,6 +188,17 @@ $is_has_delete = ck_action('declares/project/delete');
                 window.location.href = '/declares/project/create?cid=' + custId
             })
         },1000)
+    });
+
+    // 回车查询
+    $(".frm_search").bind("keydown",function(e){
+        var theEvent = e || window.event;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code === 13) {
+            //回车执行查询
+            $(".search").click();
+            return false;
+        }
     });
 
     function load_data(){

@@ -59,7 +59,7 @@ if(! function_exists('Login')){
     function Login( $A,$sPass,RequestInterface $request){
         $db = new App\Models\Admin\Users();
         $P = md5(decrypt($sPass));
-        if(!$P)exit ('密码错误!');
+        if(!$P) exit ('密码错误!');
         $RS = \App\Libraries\LibComp::U($A,$P);
         if(( !$RS || !array_key_exists('code',$RS) ) ) {
             if ($resp_data = $db->select('id,username,nickname,post,power,companyid,customerid,type')->where( $RS )->asArray()->first() ) {
@@ -156,7 +156,6 @@ function hasRole( $code ,$userId = 0 ){
     is_array( $code ) ? $db->whereIn('a.code',$code ) : $db->where('a.code',$code );
     $data = $db->from('admin_roles as a', true)->join('admin_users_role as b', 'a.id=b.role_id', 'left')
         ->where(['b.user_id' => $userId ?: session('id')])->first();
-
     return ( $data ) ? true : false;
 }
 

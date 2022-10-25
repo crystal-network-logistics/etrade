@@ -29,8 +29,7 @@ class Powers extends Base
         $role = new \App\Models\Admin\Roles();
         $U = $this->U();
         
-        if ( !$role->where('creatorId',session('id'))->first() )
-            return $this->setError('设置权限失败,没有相应角色信息');
+        if ( !$role->where('creatorId',session('id'))->first() ) return $this->setError('设置权限失败,没有相应角色信息');
         
         if ( $pw->where($U)->first() ){
             $pw->where($U)->delete();

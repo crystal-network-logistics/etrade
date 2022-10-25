@@ -638,8 +638,8 @@ var comm = {
                         success : function (resp){
                             if ( Object.prototype.toString.call(resp) == '[object String]' )
                                 resp = JSON.parse( resp );
-                            comm.Alert(resp.msg ? resp.msg : '操作成功!',resp.code);
-                            if( resp.code ){
+                                comm.Alert(resp.msg ? resp.msg : '操作成功!',resp.code);
+                            if( resp.code){
                                 $('form').find('button.'+btn).click();
                                 if( call ) call( resp );
                             }

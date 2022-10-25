@@ -42,7 +42,7 @@ $is_has_confirm_payment = ck_action('declares/project/confirm_payment');
         
         <?php if( $is_has_confirm_payment && $is_has_confirm_payment_con ) :?>
             <a class="btn btn-success" href="/declares/project/confirm_payment?id=<?=$project['ID']?>"
-               onclick="return comm.confirmCTL(this.href,'是否确认付清?',(resp)=>{ if( resp.code ) {setTimeout(()=>{window.location.reload()},3000);} else {_confirm(resp.msg);}})">
+               onclick="return _confirm(this.href,'是否确认付清?')">
                 确认付清
             </a>
         <?php endif;?>
@@ -162,25 +162,40 @@ $is_has_confirm_payment = ck_action('declares/project/confirm_payment');
         tbpayment.fnReloadAjax("/declares/payment/load_page?id=<?=$project['ID']?>");
     }
     // 确认付清
-    function _confirm(msg){
-        var notice = new PNotify({
-            title: '付清提醒',
-            text: msg,
-            hide: false,
-            type: 'warning',
-            confirm: {confirm: true,buttons: [{text: '是',addClass: 'btn-sm'},{text: '否',addClass: 'btn-sm'}]},
-            buttons: {closer: false,sticker: false},
-            history: {history: false}
-        });
-        notice.get().on('pnotify.confirm', function() {
-            comm.confirmCTL('/declares/project/transform_payment?id=<?=$project['ID']?>',msg,(res)=>{
-                if (res.code) {
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 3000);
-                }
-            });
-        });
-        notice.get().on('pnotify.cancel', function() {});
+    function _confirm( url, msg ){
+        comm.confirm({
+            msg:msg,
+            callback:function ( result ) {
+                comm.doRequest( url , {id:'<?=$project['ID']?>'},( resp )=>{
+                    console.log(resp);
+                    if ( resp.code ) {
+                        comm.Alert(resp.msg,true);
+                        setTimeout(function () {window.location.reload();}, 3000);
+                    } else {
+                        var notice = new PNotify({
+                            title: '付清提醒',
+                            text: resp.msg,
+                            hide: false,
+                            type: 'warning',
+                            confirm: {confirm: true,buttons: [{text: '是',addClass: 'btn-sm'},{text: '否',addClass: 'btn-sm'}]},
+                            buttons: {closer: false,sticker: false},
+                            history: {history: false}
+                        });
+                        notice.get().on('pnotify.confirm', function() {
+                            comm.confirmCTL('/declares/project/transform_payment?id=<?=$project['ID']?>',resp.msg,(res)=>{
+                                if (res.code) {
+                                    setTimeout(function () {window.location.reload();}, 3000);
+                                }
+                            });
+                        });
+                        notice.get().on('pnotify.cancel', function() {});
+                    }
+                },'json');
+            }
+        })
+
+
+
+        return false;
     }
 </script>

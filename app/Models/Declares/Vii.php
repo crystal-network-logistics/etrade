@@ -29,7 +29,7 @@ class Vii extends \App\Models\BaseModel
         if ( array_key_exists('invoiceamount',$array['data']) ) {
             $array['data']['taxamount'] = ( ($array['data']['invoiceamount'] / $taxrate) * $array['data']['taxreturnrate'] );
         }
-        log_message('error','vii_data_before:'.json_encode($array));
+        // log_message('error','vii_data_before:'.json_encode($array));
 
         return $array;
     }

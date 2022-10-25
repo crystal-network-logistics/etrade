@@ -1,8 +1,7 @@
 <?php
     $Id = $project['ID'];
     // 收入收齐
-    $is_has_receipt_finished = ck_action('declares/project/receipt_finished');
-
+    $is_has_confirm_receipt = ck_action('declares/project/confirm_receipt');
     $is_has_receipt_create = ck_action('declares/receipt/create');
     $is_has_receipt_rollcopy = ck_action('declares/receipt/rollcopy');
     $is_has_receipt_apply = ck_action('declares/receipt/applay');
@@ -40,15 +39,16 @@
 
 
     <?php if( $isentrance == 0 ):
-        if( $is_has_receipt_finished && confirm_receipt( $data ) && $project['receiptstatus'] == 0 ) :?>
-        <a class="btn btn-success" href="/declares/project/confirm_receipt?id=<?=$Id?>" onclick="return comm.confirmCTL(this.href,'是否确认收齐?',(resp)=>{ setTimeout(()=>{ window.location.reload() },3000) })">确认收齐</a>
-    <?php else: ?>
-        <?php if( $project && $project['receiptstatus'] == 0 ) :?>
-            <a class="btn btn-default" onclick="comm.Alert('没有达到确认收齐的条件，或者您没有确认收齐的权限！',false)">确认收齐</a>
+        if( $is_has_confirm_receipt && confirm_receipt( $data ) && $project['receiptstatus'] == 0 ) :?>
+            <a class="btn btn-success" href="/declares/project/confirm_receipt?id=<?=$Id?>" onclick="return comm.confirmCTL(this.href,'是否确认收齐?',(resp)=>{ setTimeout(()=>{ window.location.reload() },3000) })">确认收齐</a>
         <?php else: ?>
-            <a class="btn btn-default">已收齐</a>
-        <?php endif;?>
-    <?php endif; endif;?>
+            <?php if( $project && $project['receiptstatus'] == 0 ) :?>
+                <a class="btn btn-default" onclick="comm.Alert('没有达到确认收齐的条件，或者您没有确认收齐的权限！',false)">确认收齐</a>
+            <?php else: ?>
+                <a class="btn btn-default">已收齐</a>
+            <?php endif;?>
+        <?php endif;
+    endif;?>
 </div>
 
 

@@ -95,9 +95,9 @@ class Project extends \App\Models\BaseModel
                     @balancelog_end( $project_data['ID'] ,'退税收入',null,null,$receipt_argc['amount']);
 
                     $second_start = $GLOBALS['balancelog_start'] + $receipt_argc['amount'];
-
                     //退税融资费
                     $amount = receipt_sum(['projectid'=>$project_data['ID'],'customerid' => $project_data['customerid'],'usage'=>3,'approved'=>1,'status >' => 0],1);
+
                     $payment_argc = [
                         'id'=>0,'projectid'=>$project_data['ID'],
                         'receivername'=> $comp ? ($comp['shortname']??$comp['acname']) : '--',
@@ -132,7 +132,6 @@ class Project extends \App\Models\BaseModel
             }
             $array['data'] = $data;
         }
-
         log_message('error','project_data_before:'.json_encode($array));
         return $array;
     }
@@ -149,17 +148,14 @@ class Project extends \App\Models\BaseModel
                 $companyname = '一贸通';
             }
         }
-        //trim(replace(payment.receivername,' ','')) = '一贸通' or  trim(replace(payment.receivername,' ','')) = '上海澳陆供应链管理有限公司'
         $data = $this->where('id',$id)->first();
         $where = " trim(replace(payment.receivername,' ',''))='$companyname' or ".($origin ? (" trim(replace(payment.receivername,' ',''))='{$origin}'" ) : "");
-        //log_message('error','where:'.$where);
         $amt = $db->select('sum(payment.amount*exchangerate) as amt')
                 ->from('payment',true)
                 ->where(['status>='=>1,'projectid'=>$id])
                 //->where('(type in(4,5) or trim(replace(receivername," ",""))= \''.$companyname.($origin ? ("' or trim(replace(receivername,' ','')) =  '".$origin) : '' ).'\' )')
                 ->where("( $where )")
                 ->first();
-        //log_message('error',$this->getLastQuery());
 
         $data['ymt_amount'] = $amt ? $amt['amt'] : 0;
         return $data;
@@ -181,17 +177,17 @@ class Project extends \App\Models\BaseModel
 
     //获取本单余额信息
     public function get_project_amount( $id ){
+        $db = new \App\Models\Form();
         $receipt_sum = $payment_sum = $vii_sum = $vii_taxrate_sum = 0;
-
-        if ( $receipt_data = $this->select('sum( amount * exchangerate ) as amount')->from('receipt',true)
+        if ( $receipt_data = $db->select('sum( amount * exchangerate ) as amount')->from('receipt',true)
             ->where(['status>'=>0,'approved'=>1,'projectid' => $id,'vii' => 0])->first() )
             $receipt_sum = $receipt_data['amount']??0;
 
-        if ( $payment_data = $this->select('sum( amount * exchangerate ) as amount')->from('payment',true)
+        if ( $payment_data = $db->select('sum( amount * exchangerate ) as amount')->from('payment',true)
             ->where(['status>='=>0,'projectid'=>$id])->first() )
             $payment_sum = $payment_data['amount'];
 
-        if ( $vii_data = $this->select('sum( invoiceamount ) as amount,sum(invoiceamount/(1+c.viirate) * a.taxreturnrate) as TaxSum,sum(a.taxamount) as taxamount')
+        if ( $vii_data = $db->select('sum( invoiceamount ) as amount,sum(invoiceamount/(1+c.viirate) * a.taxreturnrate) as TaxSum,sum(a.taxamount) as taxamount')
             ->from('vii a',true)
             ->join('project b','a.projectid=b.id')
             ->join('invoicer c','a.invoicerid=c.id','left')

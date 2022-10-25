@@ -109,25 +109,25 @@ $is_has_off_shelves = ck_action('setup/products/off_shelves');
 
                             <?php if($is_has_update):?>
                             if(status != 2 && status != 3) {
-                                buttons += '    <a href="/setup/products/edit?id=' + full.id + '" class="label bg-primary">编辑</a> ';
+                                buttons += ` <a href="/setup/products/edit?id=${full.id}" class="label bg-primary">编辑</a> `;
                             }
                             <?php endif;?>
 
                             <?php if($is_has_copy):?>
                             if(status != 4 && status != 2 && status != 0) {
-                                buttons += '    <a href="/setup/products/copy?id=' + full.id + '" class="label bg-info">复制</a> ';
+                                buttons += ` <a href="/setup/products/copy?id=${full.id}" class="label bg-info">复制</a> `;
                             }
                             <?php endif;?>
 
                             <?php if($is_has_delete):?>
                             if( status == 0 ) {
-                                buttons += `    <a href="/setup/products/delete?id=${full.id}" class="label bg-danger" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
+                                buttons += ` <a href="/setup/products/delete?id=${full.id}" class="label bg-danger" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
                             }
                             <?php endif;?>
 
                             <?php if ($is_has_off_shelves) :?>
                             if(status == 3) {
-                                buttons += `   <a  href="/setup/products/off_shelves?id=${full.id}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确定下架该商品?')">下架</a>`;
+                                buttons += ` <a  href="/setup/products/off_shelves?id=${full.id}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确定下架该商品?')">下架</a>`;
                             }
                             <?php endif;?>
 
@@ -149,13 +149,8 @@ $is_has_off_shelves = ck_action('setup/products/off_shelves');
             });
 
             $('.tabbable>ul a').on('click',function () {
-                var status = $(this).data('status');
-                $('input[name=status]').val(status);
-                if(status != 3){
-                    comm.visibleColumn(dtproducts,2,false);
-                }else{
-                    comm.visibleColumn(dtproducts,2,true);
-                }
+                var status = $(this).data('status'); $('input[name=status]').val(status);
+                comm.visibleColumn(dtproducts,2,status != 3 ? false:true);
                 load_data();
             });
         });
@@ -164,4 +159,3 @@ $is_has_off_shelves = ck_action('setup/products/off_shelves');
             dtproducts.fnReloadAjax('/setup/products/page?'+$('.frm_search').serialize());
         }
     </script>
-

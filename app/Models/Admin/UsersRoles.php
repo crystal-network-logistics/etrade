@@ -13,7 +13,6 @@ class UsersRoles extends \App\Models\BaseModel {
         foreach ( $data as $v ) {
             if ($v) $ur[] = ['user_id' => $userId, 'role_id' => $v];
         }
-        
         if( $ur ) $this->insertBatch($ur);
         return true;
     }

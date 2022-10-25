@@ -480,14 +480,13 @@ class Project extends Base
             if($amount_data['total_sum'] > 0.05 ){
                 return $this->setError("本单余额还剩余:{$amount_data['total_sum']},是否将此金额转入未分配资金，并完成此单,完成后将不可再对本单业务进行编辑?");
             }
-
             $data['id'] = $P['id'];
             $data["paymentstatus"] = 1;
             $data["paymentdt"] = date('Y-m-d H:i:s');
             $data["donetime"] = date('Y-m-d H:i:s');
             // 保存
             if ( $this->db->save($data) ) {
-                return $this->setError('确认成功!');
+                return $this->toJson('确认成功!');
             }
         }
         return $this->setError('确认失败!');

@@ -57,9 +57,6 @@ class Upload extends Base{
     // 文件再处理
     private function _action( $action, $file_path , $filename = ''){
         $file = "/".$file_path.$filename;
-        // $image = Services::image()->withFile(".$file"); //Image::open(".$file_path");
-        // 打开原图
-        //$image = Image::open(".$file");
         $path = WRITEPATH.$file_path;
         switch ( $action ) {
             case 'signet':  // 上传章戳

@@ -16,7 +16,7 @@ class Dict extends Base {
     }
     // 数据列表
     public function data_list(){
-        $this->actionAuth();
+        $this->actionAuth(true,'admin/dict/index');
         $P = $this->U();
         $P['searchField'] = 'code,name';
         if( !$P['parentid'] )
