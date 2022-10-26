@@ -145,7 +145,6 @@ class Base extends Controller {
                 $view = view('/errors/html/error_not_auth');exit($view);
             }
         }
-
 	    function operation_log($data){
             $db = new \App\Models\Admin\OperationsLog();
             return $db->save($data);
@@ -153,18 +152,11 @@ class Base extends Controller {
 
         // 判断 是否重复提交数据
         if(array_key_exists('guid',$this->U())){
-            if (!check_form_valid($this->U('guid'))) {
-                exit('请勿重复提交数据!');
-            }
+            if (!check_form_valid($this->U('guid'))) exit('请勿重复提交数据!');
         }
 
         // 操作日志
-        return operation_log(['type'=>'', 'userid'=>$this->session->id,
-            'username'=>$this->session->username,
-            'controller'=>$aKey,
-            'action'=>$aKey,
-            'uri'=>json_encode($this->U())]);
-
+        return operation_log(['type'=>'', 'userid'=>session('id'),'username'=>session('username'),'controller'=>$aKey,'action'=>$aKey,'uri'=>json_encode($this->U())]);
 	}
 
 	// 判断数据归属
@@ -177,11 +169,11 @@ class Base extends Controller {
             case 'all':
                 $has = true;
                 break;
-            case 'ent':
-                if ( $data['companyid'] != session('company')) $has = false;
+            case 'admin':
+                if ( $data['companyid'] != session('company') ) $has = false;
                 break;
             case 'customer' :
-                if ( $data['customerid'] != session('custId')) $has = false;
+                if ( $data['customerid'] != session('custId') ) $has = false;
                 break;
         }
         return ( $has && $data ) ? $data : false;
@@ -219,7 +211,7 @@ class Base extends Controller {
             $mail->Host       = 'smtp.mxhichina.com';                   // Set the SMTP server to send through
             $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
             $mail->Username   = 'admin@yimaotong.net';                  // SMTP username
-            $mail->Password   = 'Asd12345,';                            // SMTP password
+            $mail->Password   = 'D!54g95XV5Mf63%';                      // SMTP password
             $mail->SMTPSecure = 'ssl';                                  // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
             $mail->Port       = 465;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
             $mail->CharSet='UTF-8';
