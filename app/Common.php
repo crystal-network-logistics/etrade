@@ -34,7 +34,7 @@ if (! function_exists('display')) {
         ){
             $routes = Services::router();
             $arr = explode('\\',$routes->controllerName());
-            $view = sprintf('/%s/%s/%s',$arr[3],$arr[4],$view?$view:$routes->methodName());
+            $view = sprintf('/%s/%s/%s',$arr[3],$arr[4],$view?:$routes->methodName());
         }
         unset($data['layout'],$data['view_path']);
         return view(

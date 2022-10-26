@@ -122,6 +122,8 @@ class Notify extends Base
             ->orderBy('a.createtime','desc')
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
+
+        log_message('error','message_entryform:'.$this->db->getLastQuery());
         return $data;
     }
     // 增票数据
@@ -271,7 +273,7 @@ class Notify extends Base
     public function delete(){
         $this->actionAuth();
         if( $data = $this->db->where('id',$this->U('id'))->first() ) {
-            delete_notify($data['relationid'], $data['topickey'], session('id')?:$data['receiverid'], 0);
+            delete_notify($data['relationid'], $data['topickey'] , session('id')?:$data['receiverid'], 0);
             return $this->toJson('已查看成功!');
         }
         return $this->setError('操作失败');
