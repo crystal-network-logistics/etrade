@@ -312,9 +312,7 @@
             if (tel && regPhone.test(tel) && $('.frm_reg').validate().form()) {
                 btn.disabled = true;
                 $('.frm_reg input[name=code]').attr('required', 'required');
-                comm.countdown(btn, function () {
-                    sent_very_code( tel, timer);
-                });
+                comm.countdown(btn, function () {comm.doRequest('/auth/sms/reg',{tel:tel},(resp)=>{ alert(resp.msg);},'json');});
             } else {
                 alert('请填写正确的手机号 或 必填项')
             }
@@ -327,17 +325,6 @@
         var oRemember = $('.frm_login input[name=free_agree]');
         comm.init_keep_passwd(oUser,oPswd,oRemember);
     });
-    //
-    function sent_very_code ( tel ,call ) {
-        comm.POST({
-            url : '/auth/sms/reg',
-            data : {tel : tel},
-            success : function ( resp ) {
-                alert(resp.msg);
-                if (!resp.code) clearInterval(call);
-            }
-        })
-    }
 </script>
 </body>
 
