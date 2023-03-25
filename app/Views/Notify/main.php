@@ -29,10 +29,16 @@
                     <li><a href="#" data-toggle="tab" data-table="paymentcl">成本支付 <span class="badge_paymentcl"> </span> </a></li>
                     <li><a href="#" data-toggle="tab" data-table="user">新用户 <span class="badge_user"> </span></a></li>
                     <?php endif;?>
+
+                    <span style="float: right;margin-top: 5px;">
+                        <a href="/message/notify/clearall"  onclick="return comm.confirmCTL(this.href,'是否清除无效的通知?',(resp)=>{setTimeout(()=>{window.location.reload()},3000) })" class="label bg-danger-300" data-popup="tooltip" data-placement="left" title="清除所有只读或无效通知"> 一键清除 </a>
+                    </span>
                 </ul>
             </div>
         </div>
-        <div class="div_table" style="border-top: 1px solid #eee"></div>
+        <div class="div_table" style="border-top: 1px solid #eee">
+
+        </div>
     </div>
 </div>
 <script>

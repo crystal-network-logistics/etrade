@@ -62,17 +62,18 @@
 </div>
 <script type="text/javascript">
     var dtproducts ;
-    const btns = [
+    let btns = [
         {tag:"a",text:"保存草稿",cssClass:"btn-default",attrs:{ href:'/setup/invoicer/draft' ,"onclick" : "return draft(this.href)"}},
         <?php if( $is_has_save ): ?>
         {text:"提交",cssClass:"btn-primary btn-submit"},
         <?php endif;?>
     ]
 
-    const ctl_btns = [
+    let ctl_btns = [
         <?php if( $is_has_approve ): ?>
         {tag:'a',text:'核准',cssClass:' btn-success ',attrs: { href : '' , onclick : "return approve(this)"}},
         <?php endif;?>
+
         <?php if( $is_has_refuse ): ?>
         {tag:'a',text:'拒绝',cssClass:' btn-danger ',attrs: { href : '' , onclick : "return refuse(this)"}},
         <?php endif;?>
@@ -87,14 +88,18 @@
                 {
                     aTargets:[1],
                     mRender:function(data,full){
-                        var view_buttons=[];
+                        let view_buttons = [];
                         if ( full.status == 1 ) {
                             view_buttons = ctl_btns;
+                            console.log(view_buttons[0].attrs)
                             <?php if( $is_has_approve ): ?>
                             view_buttons[0].attrs.href = '/setup/invoicer/approve?id=' + full.id;
                             <?php endif;?>
+
                             <?php if( $is_has_refuse ): ?>
-                            view_buttons[1].attrs.href = '/setup/invoicer/refuse?id=' + full.id;
+                            if (view_buttons[1]) {
+                                view_buttons[1].attrs.href = '/setup/invoicer/refuse?id=' + full.id;
+                            }
                             <?php endif;?>
                         }
                         return '<a class="hModal" data-size="lg" data-yes="N" href="/setup/invoicer/detail?id='+ full.id +'" lang="'+ data +'" data-buttons=\''+ JSON.stringify( view_buttons )+'\'>' + comm.ellipsis(data,data,180) + '</a>'
@@ -117,7 +122,7 @@
                             <?php endif;?>
 
                             <?php if( $is_has_refuse ): ?>
-                            view_buttons[1].attrs.href = '/setup/invoicer/refuse?id=' + full.id;
+                            if (view_buttons[1]) view_buttons[1].attrs.href = '/setup/invoicer/refuse?id=' + full.id;
                             <?php endif;?>
 
                         }
@@ -131,10 +136,10 @@
                         }
                         <?php endif;?>
 
-                        <?php if($is_has_update):?>
+                        <?php if ( $is_has_update ) :?>
                         if(status != 3) {
                             var b =  JSON.stringify( btns ) ;
-                            buttons += '    <a href="/setup/invoicer/edit?id='+full.id+'" class="label bg-success-300 hModal" data-size="lg" data-buttons=\''+ b +'\'>编辑</a> ';
+                            buttons += `    <a href="/setup/invoicer/edit?id=${full.id}" class="label bg-success-300 hModal" data-size="lg" data-buttons="${b}">编辑</a> `;
                         }
                         <?php endif;?>
 
@@ -143,7 +148,6 @@
                             buttons += `    <a href="/setup/invoicer/delete?id=${full.id}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
                         }
                         <?php endif;?>
-
 
                         return buttons + '</div>';
                     }

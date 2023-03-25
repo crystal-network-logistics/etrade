@@ -41,7 +41,7 @@ class Goods extends Base
         foreach ( $data as $item ) {
             $taxrate = $item['taxreturnrate'] * 100;
             $json = json_encode(['invoicerid' => $item['invoicerid'],'invoicer'=>$item['invoicer'],'taxreturnrate' => ($taxrate),'unit' => $item['unit'] , 'nums' => $item]);
-            $options .= "<option value='{$item['prodId']}' data-json='{$json}'>{$item['name']} ( 用途: {$item['usage']} , 退税率 : {$taxrate})</option>";
+            $options .= "<option value='{$item['prodId']}' data-json='{$json}'>{$item['name']} (HS:{$item['hscode']}, 用途: {$item['usage']} , 退税率 : {$taxrate} %)</option>";
         }
 
         return $options;

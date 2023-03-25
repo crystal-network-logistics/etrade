@@ -4,7 +4,7 @@ $customerId = (ckAuth()?session('custId'):(isset($_REQUEST['customerid'])?$_REQU
 $is_has_receipt_claim_approve = ck_action('declares/claim/approve');
 ?>
 
-<div class="panel">
+<div class="">
     <div class="panel-body nav-search" style="padding: 2px">
         <div class="form-horizontal frm_receipt_claim_search" action="#">
             <div class="row">

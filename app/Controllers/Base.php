@@ -41,7 +41,11 @@ class Base extends Controller {
 	{
 		// Do Not Edit This Line
 		parent::initController($request, $response, $logger);
+        // Ajax 跨域请求
         $this->response->setHeader('Access-Control-Allow-Origin','*');
+        $this->response->setHeader('Access-Control-Allow-Methods','GET,POST');
+        //
+        $this->response->setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept,Authorization');
 		//--------------------------------------------------------------------
 		// Preload any models, libraries, etc, here.
 		//--------------------------------------------------------------------
@@ -113,13 +117,21 @@ class Base extends Controller {
     }
 
     protected function request($index = null,$filter = null){
-	    if($this->request->getMethod()=='post'){
-	       return $this->request->getPost($index,$filter);
-	    }else if($this->request->getMethod()=='get'){
-	       return $this->request->getGet($index,$filter);
-	    }else {
-            return $this->request->getGetPost($index, $filter);
-	    }
+        $post_data = $this->request->getPost($index,$filter);
+
+        if ( !is_array($post_data) && !is_object($post_data) && $post_data)
+            return $post_data;
+        $get_data = $this->request->getGet($index,$filter);
+
+        if ( !is_array($get_data) && !is_object($get_data) && $get_data)
+            return $get_data;
+
+        if ( $post_data && !$get_data ) return $post_data;
+        if ( !$post_data && $get_data ) return $get_data;
+
+        if ( $post_data && $get_data ) return array_merge($post_data,$get_data);
+
+        return [];
     }
 
     protected function U($index = null,$filter = null){
@@ -149,7 +161,6 @@ class Base extends Controller {
             $db = new \App\Models\Admin\OperationsLog();
             return $db->save($data);
         }
-
         // 判断 是否重复提交数据
         if(array_key_exists('guid',$this->U())){
             if (!check_form_valid($this->U('guid'))) exit('请勿重复提交数据!');

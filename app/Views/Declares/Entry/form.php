@@ -198,7 +198,7 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
             </div>
         </div>
 
-        <a id="dProduct" href="/setup/products/selected?customerid=<?=$CustomerID?>" class="row hModal" data-size="lg" data-text="确定选择" lang="选择报关产品" style="display: block; text-align:center;border:1px dashed gray;margin-left:20%;margin-right:20%;padding:10px;margin-bottom:10px;background-color:rgb(251,251,251);cursor:pointer" di="0">
+        <a id="dProduct" href="/setup/products/selected?customerid=<?=$CustomerID?>" class="row hModal" data-size="lg" data-text="确定选择" lang="选择报关产品" style="display: none; text-align:center;border:1px dashed gray;margin-left:20%;margin-right:20%;padding:10px;margin-bottom:10px;background-color:rgb(251,251,251);cursor:pointer" di="0">
             添加已审核通过产品到报关单据
         </a>
 
@@ -222,7 +222,7 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
             <?php if( $goods ) : ?>
                 <?php foreach ( $goods as $key=>$item ) :?>
                     <?php $data['currency'] = $entry ? $entry['currency'] : 'USD'; $data['item'] = $item;?>
-                    <?=view('/Declares/Goods/items',['data'=>$data])?>
+                    <?php echo view('/Declares/Goods/items',['data'=>$data])?>
                 <?php endforeach;?>
             <?php endif;?>
         </div>
@@ -302,11 +302,14 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
     <?php if ($entry) :?>
         set_currencyname();
         jgfs('<?=$entry['taxation']?:''?>');
-        const cb = new Promise((resolve,reject) => {setTimeout(function(){resolve()},200)});
+        const cb = new Promise((resolve,reject) => {setTimeout(()=>{resolve()},200)});
         cb.then(()=>{comm.formload($('.entity'),{entryform:"<?=$entry["entryform"]?>",foreigncurrency:"<?=$entry["foreigncurrency"]?>",priceterm:"<?=$entry["priceterm"]?>"});});
     <?php endif;?>
 
     <?php if ( $goods ) :?>
     update_index();
     <?php endif;?>
+    $('#dProduct').css('display','block');
 </script>
+<?php
+?>

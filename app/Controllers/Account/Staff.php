@@ -31,7 +31,9 @@ class Staff extends Base
             ->asObject()
             ->search($P)
             ->where("type",'ent')
+            ->orderBy('createtime','desc')
             ->paginates( $this->_page() );
+
         $db = new \App\Models\Form();
         foreach ( $data['data'] as $item ) {
             $this->session->set('Uid',$item->id);
@@ -86,13 +88,11 @@ class Staff extends Base
         $this->actionAuth(true);
         $form = $this->U();
         $form['type'] = 'ent';
-
         if ( $form["role"]) {
             $db = new \App\Models\Admin\Roles();
             if( $role_data = $db->asArray()->where('id',$form['role'][0] )->first() ) 
                 $form['power'] = $role_data['code'];
         }
-
         $this->db->setValidationMessages($this->db->validationMessages);
         if( $this->db->save($form) ) {
             $db = new \App\Models\Admin\UsersRoles();
@@ -177,6 +177,63 @@ class Staff extends Base
 
         $data['data'] = LibComp::get_owner_data(['companyid' => $companyId,'power' => ['owner','operator']]);
 
+        return $this->toJson($data);
+    }
+
+    // 添加
+    public function agent(){
+        $this->actionAuth();
+        $form = $this->U();
+        if ( $this->request->getMethod() == 'post' ) {
+            $form['type'] = 'ent'; $form['status'] = 0;$form['power'] = 'agent';
+
+            $this->db->setValidationMessages($this->db->validationMessages);
+            if( $this->db->save($form) ) {
+                $db = new \App\Models\Admin\UsersRoles();
+                $form["id"] = $form["id"]?:$this->db->getInsertID();
+                if ( $role_data = get_role_data(['code'=>'agent']) ) {
+                    // 保存用户角色
+                    $db->batch_save($form["id"], [$role_data['id']]);
+                    // 保存绑定操作客户
+                    $operator_db = new \App\Models\Setup\Operator();
+                    $operator_db->batch_bind( $form["id"] , $form['cids'] );
+                }
+                return $this->toJson('已保存');
+            }
+            return $this->setError($this->db->errors());
+        }
+        $data = [];
+        if ( $form['id'] ) {
+            $operator_db = new \App\Models\Setup\Operator();
+            $operator_data = $operator_db->where('userid',$form['id'])->findAll();
+            $data = $this->db->where('id',$form['id'])->asArray()->first();
+            $arr = [];
+            foreach ( $operator_data as $item ) $arr[] = $item['customerid'];
+            $data['cids'] = $arr;
+
+            log_message('error',json_encode($data));
+        }
+
+        return $this->render(['data' => $data]);
+    }
+
+    //
+    public function binder() {
+        return $this->render([
+            'user_id' => $this->U('id')
+        ]);
+    }
+
+    // 员工详情
+    public function binder_customer_data(){
+        $this->actionAuth();
+        $db = new \App\Models\Setup\Customer();
+        $P = $this->U();
+        $data = $db
+            ->asObject()
+            ->where("id in (select customerid from operator where userid={$P["user_id"]})")
+            ->orderBy('createtime','desc')
+            ->RPaging( $this->_page() ,$this->_size());
         return $this->toJson($data);
     }
 }

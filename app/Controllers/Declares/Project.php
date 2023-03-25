@@ -22,8 +22,7 @@ class Project extends Base
         $this->actionAuth();
         $db = new \App\Models\Form();
         $P = $this->U();
-        $P['searchField'] = 'BusinessID,remark';
-
+        $P['searchField'] = 'project.BusinessID,project.remark';
         $argc = $P;
 
         // 进行中
@@ -38,13 +37,22 @@ class Project extends Base
         $argc['status'] = 0;
         $status_c = $this->db->whereAuth('customerid')->search($argc)->countAllResults();
 
-        $this->db->orderBy( $this->_s_name()??'createtime'  ,$this->_s_dir()??'desc');
+        $P['project.customerid'] = $P['customerid'];
+        $P['project.status'] = $P['status'];
+        unset($P['status'],$P['customerid']);
 
-        $data = $this->db->asObject()
+        $sortting = ($P['project.status'] == 2 && ($this->_s_name() == 'createtime' || $this->_s_name() == 'donetime')) ? 'project.donetime':$this->_s_name();
+
+        $this->db->orderBy( $sortting  ,$this->_s_dir()??'desc');
+
+        $data = $this->db->select('project.*,exportdate,entryport,bgamount')
+            ->from('project',true)
+            ->join('entryform','project.id=entryform.projectid','left')
+            ->join("(select projectid,sum(ProductUnitPrice*ProductAmount) as bgamount from goods group by projectid) as c",'project.id=c.projectid','left')
+            ->asObject()
             ->search($P)
-            ->whereAuth('customerid')
+            ->whereAuth('project.customerid','project.companyid')
             ->RPaging( $this->_page() ,$this->_size());
-
         foreach ( $data['data'] as $row ) {
             $row = $this->_colunm_data($row , $db );
             $row->createtime = $row->createtime ? date('Y-m-d',strtotime($row->createtime)) : '';
@@ -67,6 +75,7 @@ class Project extends Base
 
         $data = $this->db->asObject()
             ->search($P)
+            ->where('status',1)
             ->whereAuth('customerid')
             ->orderBy('createtime','desc')
             ->RPaging( $this->_page() , $this->_size() );
@@ -185,15 +194,13 @@ class Project extends Base
             if ( $this->request->getMethod() == 'post' ) {
                 $file_name = $this->U('entry_file');
                 $argc = ['status' => ( $entry_data['status'] == 2 ) ? 3 : 5 ];
-                // $entry_data['status'] = ( ($entry_data['status'] == 2 ) ? 3 : 5);
                 if ( $argc['status'] == 3 ) {
                     delete_notify($entry_data['id'],'TOPIC_APPROVED_ENTRYFORM',session('id'),1);
                     $argc['authdeclar'] = $file_name?:'';
                 } else {
                     $argc['clearance'] = $file_name?:'';
                 }
-                log_message('error','$argc:'.json_encode($argc));
-                if ( $db->set($argc)->where('id',$entry_data['id'])->update() ) { //save( $entry_data ) ) {
+                if ( $db->set($argc)->where('id',$entry_data['id'])->update() ) {
                     return $this->toJson('操作成功!');
                 }
                 return $this->setError('操作失败!');
@@ -230,7 +237,6 @@ class Project extends Base
 
         if (  $type == 5 && $data["project"]["isentrance"] == 0 ) {
             $file = '.' . $data["entry"]["authdeclar"]; $this->_view_authdeclar($data);
-            //log_message('error','authdeclar:'. $file);
             if (!file_exists($file)) $this->_update_authdeclar($data);
             $file = '.' . $data['entry']["authdeclar"];
         } else {
@@ -431,12 +437,12 @@ class Project extends Base
             exit('无法打开文件，或者文件创建失败');
         }
 
-        foreach($invoicer_data as $row){
+        foreach($invoicer_data as $k=>$row){
             $file1 = $this->_viidownload(1,$projectId,$row['id']);
             $file2 = $this->_viidownload(2,$projectId,$row['id']);
             if(file_exists($file1) && file_exists($file2)) {
-                $zip->addFile($file1, "{$row["name"]}--开票信息.pdf");
-                $zip->addFile($file2, "{$row["name"]}--采购合同.pdf");
+                $zip->addFile($file1, "{$k}-{$row["name"]}--开票信息.pdf");
+                $zip->addFile($file2, "{$k}-{$row["name"]}--采购合同.pdf");
             }
         }
         $zip->close();
@@ -567,7 +573,8 @@ class Project extends Base
     public function downbooking(){
         $this->actionAuth();
         $P = $this->U();
-        if( $project_data = $this->db->where('id',$P['id'])->first() && ckAuth() ){
+        $project_data = $this->db->where('id',$P['id'])->first() ;
+        if( $project_data && ckAuth() ){
             if(session('custId') != $project_data['customerid']) return $this->setError('参数错误!');
         }
         $goods_db = new \App\Models\Declares\Goods();
@@ -605,6 +612,71 @@ class Project extends Base
         $data['data'] = $this->db->available_projects(['customerid' => $customerId,'isentrance' => 0,'status' => 1]);
         return $this->toJson($data);
     }
+
+    # region 撤销操作
+
+    // 回退操作
+    public function rollback( $back_type = ''){
+        $this->actionAuth(true,'declares/project/rollback');
+        $Id = $this->U('id');
+        if( $data = $this->db->where('id',$Id)->first() ) {
+            $resp = false ;
+            $payment_db = new \App\Models\Declares\Payment();
+            $receipt_db = new \App\Models\Declares\Receipt();
+            $balance_db = new \App\Models\Declares\Balance();
+
+            switch ( $back_type ) {
+                case 'taxrefund':        // 撤消退税
+                    if ( $data['taxrefund'] == 4 && $this->db->save(['id' => $Id ,'taxrefund' => 0]) ) {
+                        // 删除 收入记录
+                        $receipt_db->where(['projectid' => $Id, 'status' => 1, 'vii' => 1, 'accounttype' => 1, 'usage' => 3, 'approved' => 1, 'note' => '退税'])->delete();
+                        // 删除 余额记录
+                        $balance_db->where(['customerid' => $data["customerid"], 'comment' => "{$data['BusinessID']}-退税收入"])->delete();
+                        // 删除 付款记录
+                        $payment_db->where(['projectid' => $Id, 'status' => 1, 'receiver_tag' => 1, 'type' => 1, 'transfer' => 0, 'note' => '退税融资费'])->delete();
+                        // 删除 余额记录
+                        $balance_db->where(['customerid' => $data["customerid"], 'comment' => "{$data['BusinessID']}-费用支出"])->delete();
+                        //
+                        $resp = true;
+                    }
+                    break;
+                case 'vii':             // 撤消增票收齐
+                    if ( $data['viistatus'] == 1 ) {
+                        if ( $this->db->save(['id' => $Id,'viistatus' => 0 , 'viidt' => null]) ) $resp = true;
+                    }
+                    break;
+                case 'receipt':          // 撤消收入收齐
+                    if ( $data['receiptstatus'] == 1 && $this->db->save(['id' => $Id ,'receiptstatus' => 0,'receiptdt' => null]) ) {
+                        // 删除 付款记录
+                        $payment_db->where(['projectid' => $Id, 'status' => 1, 'receiver_tag' => 1, 'type' => 4, 'transfer' => 0, 'note' => '代理费'])->delete();
+                        // 删除 余额记录
+                        $balance_db->where(['customerid' => $data["customerid"], 'comment' => "{$data['BusinessID']}-费用支付"])->delete();
+                        //
+                        $resp = true;
+                    }
+
+                    break;
+                case 'payment':         // 撤消付款付清
+                    if ( $data['paymentstatus'] == 1 && $data['status'] == 2 && $this->db->save(['id' => $Id ,'status' => 1,'paymentstatus' => 0,'donetime' => null , 'paymentdt' => null]) ) {
+                        // 删除 收入记录
+                        $receipt_db->where(["projectid" => $Id, 'status'=>2,'vii'=>0,'usage'=>2,'approved'=>1,'transfer'=>1, 'note' => '业务单余额结算兑冲'])->delete();
+                        $receipt_db->where(["customerid"=>$data["customerid"],"payername" =>"{$data["BusinessID"]}业务单余额结算",'status'=>2,'vii'=>0,'usage'=>2,'approved'=>1,'transfer'=>1, 'note' => '业务单余额结算兑冲'])->delete();
+                        $resp = true;
+                    }
+                    break;
+                default:
+                    if ( $data['status'] == 2 && $this->db->save(['id' => $Id ,'status' => 1,'donetime' => null ]) ) {
+                        $resp = true;
+                    }
+                    break;
+            }
+
+            if ( $resp ) return $this->toJson('操作成功!');
+        }
+        return $this->setError('操作失败!');
+    }
+
+    # endregion
 
     // 开票人生成pdf
     private function _ViiKP($data,$type = ''){
@@ -775,6 +847,7 @@ class Project extends Base
                 a.*,
                 b.englishname,
                 ifnull( a.supelement,b.supelement ) as supelement ,b.hscode,a.id as gid,
+                b.usage,
                 a.ProductChineseName as name,a.productid as pid,c.name as invoicer,c.domesticsource')
                 ->from('goods as a',true)
                 ->join('products as b','a.productid=b.id','left')
@@ -789,11 +862,10 @@ class Project extends Base
 
         $customer_data = $db->from('customer',true)->where('id',$row->customerid)->first();
         $entry_data = $db->from('entryform',true)->where('projectid',$row->ID)->first();
-        $goods_data = $db->from('goods',true)->select('sum(ProductUnitPrice*ProductAmount) as bgamount,sum(ProductGrossWeight) as sumgrossweight,sum(ProductNetWeight) as sumnetweight')->where('projectid',$row->ID)->first();
+        $goods_data = $db->from('goods',true)->select('sum( case when ProductUnitTotalPrice > 0 then ProductUnitTotalPrice else ProductUnitPrice*ProductAmount end ) as bgamount,sum(ProductGrossWeight) as sumgrossweight,sum(ProductNetWeight) as sumnetweight')->where('projectid',$row->ID)->first();
         
-        if ( $row->isentrance )  
-            $db->where('status >=',0);
-        else  
+        if ( $row->isentrance )  $db->where('status >=',0);
+        else
             $db->where('status >=',3);
         
         $vii_data = $db->from('vii',true)->selectSum('invoiceamount')->where(['projectid'=>$row->ID])->first();

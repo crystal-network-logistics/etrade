@@ -33,7 +33,7 @@ class Goods extends \App\Models\BaseModel
             foreach ( $form['tags'] as $k => $v ) {
                 $fd = [];
                 foreach ( $colunms as $filed ) {
-                    $temp = ( in_array($filed,['ProductUnitPrice','ProductUnitTotalPrice']) ) ? ( [$filed =>str_replace(',','', $form[$filed][$k])] ): [$filed => $form[$filed][$k]];
+                    $temp = ( in_array($filed,['ProductUnitPrice','ProductUnitTotalPrice','invoiceamount','ProductAmount']) ) ? ( [$filed =>str_replace(',','', $form[$filed][$k])] ): [$filed => $form[$filed][$k]];
                     $fd = array_merge($fd,$temp);
                 }
              $this->save($fd);

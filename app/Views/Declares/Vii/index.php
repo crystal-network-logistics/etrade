@@ -20,7 +20,8 @@
     $is_has_refuse_taxrefund = ck_action('declares/project/refuse_taxrefund');
     // 增票收齐
     $is_has_finish_vii = ck_action('declares/project/finish_vii');
-
+    // 撤消
+    $is_has_rollback = ck_action('declares/project/rollback')
 ?>
 <div class="content">
     <div class="panel">
@@ -70,6 +71,7 @@
             <?php if( !$is_has_refuse_taxrefund ): ?>
                 <a class="btn btn-primary" href="/declares/project/refuse_taxrefund?id=<?=$project['ID']?>" onclick="return comm.confirmCTL(this.href,'是否拒绝申请退税?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })">拒绝申请退税</a>
             <?php endif; ?>
+
         <?php endif;?>
 
         <?php if(ckAuth() && $project && $project['taxrefund'] == 3):?>
@@ -81,16 +83,23 @@
         <?php else: ?>
             <?php if( $project['viistatus'] == 1 ): ?>
                 <a class="btn btn-default">增票已收齐</a>
+                <?php if ( $is_has_rollback ):?>
+                    <a class="btn btn-danger" href="/declares/project/rollback/vii?id=<?=$project["ID"]?>"  onclick="return comm.confirmCTL(this.href,'确定撤消增票收齐操作?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })"><i class="icon icon-forward"></i> 撤销增票收齐 </a>
+                <?php endif;?>
             <?php endif;?>
         <?php endif;?>
 
         <?php if( $project && $project['taxrefundreason'] ):?>
             <span class="text-danger ml-20">
-                <?php if( in_array($project['taxrefund'] , [4,5]) ): ?>
+                <?php if( in_array( $project['taxrefund'] , [4,5] ) ): ?>
                     退税申请状态: <?=\App\Libraries\LibComp::get_dict('TAXREFUND',$project['taxrefund'])?>
                     <span>，理由：<?=$project['taxrefundreason'];?></span>
                 <?php endif;?>
             </span>
+        <?php endif;?>
+
+        <?php if( $project['taxrefund'] == 4 && $is_has_rollback) :?>
+            <a class="btn btn-danger" href="/declares/project/rollback/taxrefund?id=<?=$project["ID"]?>"  onclick="return comm.confirmCTL(this.href,'确定撤消退税操作?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })"><i class="icon icon-forward"></i> 撤销退税 </a>
         <?php endif;?>
     </div>
 </div>
@@ -100,6 +109,7 @@
         tbvii = comm.dt({
             ele : $('.tb_project_vii'),
             url : "/declares/vii/load_page?id=<?=$project['ID']?>",
+            //scrollY:'320px',
             paging : false,
             bInfo:false,
             columns : ['productname','amount','unit','invoiceamount','taxreturnrate','invoicer','createtime','paystatus','status','note'],

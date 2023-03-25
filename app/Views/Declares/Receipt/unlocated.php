@@ -1,8 +1,9 @@
 <?php
     $projectId = isset($_REQUEST['id']) ? $_REQUEST['id'] : 0;
-    $customerId = (ckAuth()?session('custId'):(isset($_REQUEST['customerid'])?$_REQUEST['customerid']:0))
+    $customerId = (ckAuth()?session('custId'):(isset($_REQUEST['customerid'])?$_REQUEST['customerid']:0));
+    $isentrance = isset($_REQUEST['isentrance'])?$_REQUEST['isentrance']:0;
 ?>
-<div class="panel">
+<div class="">
     <div class="panel-body nav-search" style="padding: 2px">
         <div class="form-horizontal frm_unlocated_search" action="#">
             <div class="row">
@@ -48,7 +49,7 @@
                 {
                     aTargets:[0],
                     mRender:function(data,full){
-                        return `<a class="label bg-primary-300 hModal" data-group="pullin" href="/declares/receipt/pullin?id=${full.id}&projectid=<?=$projectId?>"
+                        return `<a class="label bg-primary-300 hModal" data-group="pullin" href="/declares/receipt/pullin?id=${full.id}&projectid=<?=$projectId?>&isentrance=<?=$isentrance?>"
                         data-text="确认转入"
                         data-call="load_unlocated_data,load_receipts_data"
                         lang="资金转入">
@@ -91,8 +92,13 @@
         });
     });
 
-    function load_unlocated_data(){
+    function load_unlocated_data( resp ){
         var keys = $('.frm_unlocated_search input[name=keys]').val();
         tb_unlocated_receipt.fnReloadAjax(`/declares/receipt/load_unlocated_page?customerid=<?=$customerId?>&keys=${keys}`);
+        if ( !window.load_receipts_data ) {
+            var isentrance='<?=$isentrance?>' , view = 'project';
+            if ( isentrance == "1" ) view = 'import';
+            window.location.href = `/declares/${view}/view?id=${resp.projectid}`
+        }
     }
 </script>

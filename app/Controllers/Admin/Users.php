@@ -120,4 +120,6 @@ class Users extends Base
         }
         return $this->setError('密码设置失败');
     }
+
+
 }

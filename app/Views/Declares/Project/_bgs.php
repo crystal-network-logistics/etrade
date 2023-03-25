@@ -119,7 +119,6 @@
     <?php $i = 1;?>
     <?php foreach($goods as $key=>$item) {
         $row = is_array($item) ? ((object) $item) : $item;
-        //log_message('error',json_encode($row));
         ?>
         <tr style="page-break-inside: avoid !important;">
             <td align="center" class="td" style="width: 5%"><?=$i?></td>
@@ -134,11 +133,10 @@
                     <?php foreach ( $supelements[$n] as $k=>$v ) :?>
                         <?=$v?('| '.$k.':'.$v):''?>
                     <?php endforeach;?>
-                <?php } }
-                ?>
+                <?php } }?>
             </td>
             <td align="center" class="td" style="width: 12%"><?php echo number_format($row->officialamount,2). $row->officialunit.'<br/>'.number_format($row->ProductAmount,2). (is_numeric($row->productunit)?(\App\Libraries\LibComm::Unit($row->productunit)):$row->productunit)?></td>
-            <td align="center" class="td" style="width: 14%"><?=number_format($row->ProductUnitPrice,2)?> <br /> <?=number_format($row->ProductUnitTotalPrice,2)?> <br /> <?=$entry->currency?></td>
+            <td align="center" class="td" style="width: 14%"><?=number_format($row->ProductUnitPrice,4)?> <br /> <?=number_format( $row->ProductUnitTotalPrice,2)?> <br /> <?=$entry->currency?></td>
 
             <td align="center" class="td" style="width: 13%"><?=\App\Libraries\LibComp::get_dict('COUNTRY',$row->region)?></td>
             <td align="center" class="td" style="width: 13%"><?=\App\Libraries\LibComp::get_dict('COUNTRY',$entry->destionationcountry)?></td>

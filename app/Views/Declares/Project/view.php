@@ -14,11 +14,23 @@
         <div class="panel-heading bg-primary">
             <h6 class="panel-title">
                 <a class="collapsed" data-toggle="collapse" href="#baoguan">报关资料</a>
-                <?php if($entry) {?>
+                <?php if($entry) :?>
+                    <?php
+                        $tooltip = '';
+                        if ( session('id') && session('power') == 'agent' && $project["bgamount"] > 0 ) {
+                            $user_data = \App\Libraries\LibForm::user(['id' => session('id')]);
+                            $amount = number_format( $project["bgamount"] * ($user_data["percentage"]?:0) / 100 , 2) ;
+                            $tooltip = "data-popup='tooltip' data-html='true' title='本单毛利提成 {$user_data["percentage"]}%,共:RMB {$amount}'";
+                        }
+                    ?>
                     <span class="sm">启运港:<?=\App\Libraries\LibComp::get_dict('CITY',$entry['entryport'])?></span>&nbsp;&nbsp;
                     <span class="sm">运抵国: <?=\App\Libraries\LibComp::get_dict('COUNTRY',$entry['destionationcountry'])?></span>&nbsp;&nbsp;
                     <span class="sm">出运时间: <?=$entry["exportdate"]?></span>&nbsp;&nbsp;
-                    <span class="sm">报关金额: <?=round( $project["bgamount"],2)?></span>&nbsp;&nbsp;
+                    <span class="sm" <?=$tooltip?>>报关金额: <?=number_format(round($project["bgamount"],2),2)?></span>&nbsp;&nbsp;
+                    <?php if ( session('id') && session('power') == 'agent' && $project["bgamount"] > 0 ) :?>
+                        <span class="sm mr-20">本单毛利: <?=$amount?></span>
+                    <?php endif;?>
+
                     <span class="sm">通关单号: <?=$entry["clearancenbr"]?></span> &nbsp;&nbsp;
                     <span class="sm">
                         <?php
@@ -32,7 +44,8 @@
                             <span class="bg-warning label" data-popup="tooltip" data-html="true" title="<?=$text?>">报关流程红色预警</span>
                         <?php }?>
                     </span>
-                <?php }?>
+
+                <?php endif;?>
             </h6>
 
             <div class="heading-elements">
@@ -50,5 +63,8 @@
             <?php endif;?>
         </div>
     </div>
+
+    <?php if (session('power') != 'agent') :?>
     <?=view('/Declares/Project/item')?>
+    <?php endif;?>
 </div>

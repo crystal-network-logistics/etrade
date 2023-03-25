@@ -33,6 +33,7 @@ class LibForm{
             ->join('operator as b','a.id=b.userid','left')
             ->where('b.customerid',$customerId)
             ->where('a.type','ent')
+            ->orderBy('a.id','desc')
             ->first();
         return $data;
     }

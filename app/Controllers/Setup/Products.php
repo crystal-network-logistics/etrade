@@ -235,7 +235,7 @@ class Products extends Base
 
     // 绑定开票人
     public function bind_invoicer(){
-        $this->actionAuth(true);
+        $this->actionAuth();
         $form = $this->U();
         //
         if ( !$model = $this->ck_auth_data( $this->db ,$form ) )
@@ -299,7 +299,7 @@ class Products extends Base
     }
 
     // 根据开票人获取产品
-    public function get_data_by_invoicer(){
+    public function get_data_by_invoicer( $ispage = '' ){
         $this->actionAuth();
         $form = $this->U();
         $form['isentrance'] = 0 ;
@@ -307,13 +307,32 @@ class Products extends Base
         if ( ckAuth() ) {
             $form['customerid'] = session('custId');
         }
+
+        $form['searchField'] = 'name,model,brand,englishname,productid';
+
         $sql = "invoicerid = 0 or invoicerid is null";
         if ( $form['products'] ) {
             $products = $form['products'];
             $sql .= " or id in ( $products )";
         }
-        $data = $this->db->search( $form )->where("($sql)")->findAll();
-        return $this->toJson(['data'=>$data]);
+        $this->db->select('id,name,invoicerid,hscode,productid,brand,taxreturnrate')->search( $form )->where("($sql)");
+        if ( !$ispage )
+            $data['data'] = $this->db->findAll();
+        else {
+            $data = $this->db->paginates($this->_page(),$this->_size());
+        }
+        return $this->toJson($data);
+    }
+
+    //
+    public function binder_invoicer(){
+        $this->actionAuth();
+        $db = new \App\Models\Setup\Invoicer();
+        $P = $this->U();
+        if ( !$data = $db->where('id',$P['id'])->first() ) exit('参数错误');
+        return $this->render(
+            ['data' =>$data]
+        );
     }
 
     // 创建进口商品

@@ -43,9 +43,8 @@ class Project extends \App\Models\BaseModel
                 //确认收齐
                 if( array_key_exists('receiptstatus',$data) && $data['receiptstatus'] == 1 && compare($data,$project_data,"receiptstatus") ){
                     $payment_db = new \App\Models\Declares\Payment();
-
                     // 代理费
-                    $amount = receipt_sum(['projectid'=>$project_data['ID'],'usage'=>1,'approved'=>1 , 'customerid' => $data['customerid'],'status >'=>0],0);
+                    $amount = receipt_sum(['projectid'=>$project_data['ID'],'usage'=>1,'approved'=>1 , 'customerid' => $data['customerid']],0);
                     // 支付情况
                     $payment = [ 'id'=>0,'projectid'=>$project_data['ID'],
                         'receiver_tag'=>1,'type'=>4,
@@ -59,7 +58,6 @@ class Project extends \App\Models\BaseModel
                     if ( $payment_data = $payment_db->where(['projectid'=>$project_data['ID'],'note'=>'代理费','type' => 4])->first() ){
                         $payment['id'] = $payment_data['id'];
                     }
-                    log_message('error','代理费:'.json_encode($payment));
                     @balancelog_start( $project_data['ID'] );
                     // 保存支付方式
                     $payment_db->save( $payment );
@@ -68,7 +66,7 @@ class Project extends \App\Models\BaseModel
 
                 // 已申请退税
                 if( array_key_exists("taxrefund",$data) && $data['taxrefund'] == 3 && compare($data,$project_data,"taxrefund") ){ //$data['taxrefund'] != $project_data['taxrefund']
-                    notice_add('TOPIC_APPLY_TAXREFUND',$project_data['ID'],'project','/notices/project',0,1);
+                    notice_add('TOPIC_APPLY_TAXREFUND',$project_data['ID'],'project','/notices/project',1,0);
                 }
                 // 退税
                 if( array_key_exists("taxrefund",$data) && $data['taxrefund'] == 4  && compare($data,$project_data,"taxrefund") ){
@@ -79,7 +77,7 @@ class Project extends \App\Models\BaseModel
                     $receipt_argc = [
                         'id'=>0,'customerid'=>$data['customerid'] ?? $customer_data['id'],
                         'payername'=>'无','payercountry'=>0,'projectid'=>$project_data['ID'],
-                        'amount'=>$this->tax_amount( $project_data ),
+                        'amount'=>$this->tax_amount( $project_data , $data['taxrefund']),
                         'currency'=>'CNY','note'=>'退税','exchangerate'=>1,'createdat'=>time(),
                         'receiptdate'=>date('Y-m-d'),'status'=>1,'vii'=>1,'accounttype'=>1,'usage'=>3,'approved'=>1];
                     //判断是否存在
@@ -93,10 +91,10 @@ class Project extends \App\Models\BaseModel
                     //保存,写通知（Code）
                     $receipt_db->save($receipt_argc);
                     @balancelog_end( $project_data['ID'] ,'退税收入',null,null,$receipt_argc['amount']);
-
+                    //
                     $second_start = $GLOBALS['balancelog_start'] + $receipt_argc['amount'];
-                    //退税融资费
-                    $amount = receipt_sum(['projectid'=>$project_data['ID'],'customerid' => $project_data['customerid'],'usage'=>3,'approved'=>1,'status >' => 0],1);
+                    // 退税融资费
+                    $amount = receipt_sum(['projectid'=>$project_data['ID'],'customerid' => $project_data['customerid'],'usage'=>3,'approved'=>1],1);
 
                     $payment_argc = [
                         'id'=>0,'projectid'=>$project_data['ID'],
@@ -149,25 +147,21 @@ class Project extends \App\Models\BaseModel
             }
         }
         $data = $this->where('id',$id)->first();
-        $where = " trim(replace(payment.receivername,' ',''))='$companyname' or ".($origin ? (" trim(replace(payment.receivername,' ',''))='{$origin}'" ) : "");
+        $where = " trim(replace(payment.receivername,' ',''))='$companyname' ".($origin ? (" or trim(replace(payment.receivername,' ',''))='{$origin}'" ) : "");
         $amt = $db->select('sum(payment.amount*exchangerate) as amt')
                 ->from('payment',true)
                 ->where(['status>='=>1,'projectid'=>$id])
-                //->where('(type in(4,5) or trim(replace(receivername," ",""))= \''.$companyname.($origin ? ("' or trim(replace(receivername,' ','')) =  '".$origin) : '' ).'\' )')
                 ->where("( $where )")
                 ->first();
-
         $data['ymt_amount'] = $amt ? $amt['amt'] : 0;
         return $data;
     }
 
     // 有效业务单
     public function available_projects( $Id ){
-        
         if ( is_numeric($Id) && $data = $this->where('id',$Id)->first() ) {
             $this->where([ 'customerid'=>$data['customerid'],'isentrance' => $data['isentrance'] , 'status' => 1, 'id <>'=>$Id]);
         }
-        
         if ( is_array( $Id ) ) {
             $this->search($Id);
         }
@@ -226,10 +220,10 @@ class Project extends \App\Models\BaseModel
     }
 
     // 退税额
-    public function tax_amount( $project_data ){
-        if( $project_data['taxrefund'] == 4 ){
+    public function tax_amount( $project_data , $taxrefund = 0){
+        if( $taxrefund == 4 ){
             $db = new \App\Models\Declares\Vii();
-            $data = $db->select('sum(taxamount) as vsum')->where('projectid',$project_data ['id'])->first();
+            $data = $db->select('sum(taxamount) as vsum')->where('projectid',$project_data['ID'])->first();
             return $data ? $data['vsum'] : 0;
         }
         return 0;

@@ -49,6 +49,12 @@ function get_overseas( $Id ){
     return $db->where('id',$Id)->first();
 }
 
+// 获取角色
+function get_role_data( $argc = [] ){
+    $db = new \App\Models\Admin\Roles();
+    return $db->search($argc)->asArray()->first();
+}
+
 function find_by_array_flip($array,$find){
     $array=array_flip($array);
     return $array[$find];

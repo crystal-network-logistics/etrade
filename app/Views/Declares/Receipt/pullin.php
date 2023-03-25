@@ -1,11 +1,13 @@
 <?php
     $unlocated_data = $data['detail'];
+    $isentrance = isset($_REQUEST['isentrance'])?$_REQUEST['isentrance']:0;
+
 ?>
 <form id="frm_receipt_pullin" class="form-horizontal" action="/declares/receipt/pullin">
     <input name="id" type="hidden" value="<?=$unlocated_data['id']?>">
     <input name="projectid" type="hidden" value="<?=$unlocated_data['projectid']?>">
     <input name="customerid" type="hidden" value="<?=$unlocated_data['customerid']?>">
-    <input name="isentrance" type="hidden" value="<?=$unlocated_data['isentrance']?>">
+    <input name="isentrance" type="hidden" value="<?=$unlocated_data['isentrance']??($isentrance)?>">
 
     <div class="form-group">
         <label class="col-lg-3 control-label">收款日期<span class="red">*</span>:</label>

@@ -109,7 +109,7 @@ $stamper_png = base64_image_data( $company['stamp_zh_en'] );
 </table>
 <table style="width:100%;border-collapse:collapse;<?=($entry["entryform"]==0?("background-image:url('$stamper_png');background-repeat:no-repeat;"):"")?>">
     <tr style="">
-        <td style="border-left:1px solid black;border-top:1px solid black;border-bottom:1px solid black;">运费: <?=number_format($entry["tranportexpense"],4)?>&nbsp;&nbsp;&nbsp;&nbsp;保费: <?=number_format($entry["insurancefee"],4)?></td>
+        <td style="border-left:1px solid black;border-top:1px solid black;border-bottom:1px solid black;">运费: <?=number_format($entry["tranportexpense"],2)?>&nbsp;&nbsp;&nbsp;&nbsp;保费: <?=number_format($entry["insurancefee"],2)?></td>
         <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black" align="right">TOTAL AMOUNT <?=$entry["currency"].'  '.number_format($total,2)?></td>
     </tr>
 

@@ -125,10 +125,8 @@ class Vii extends Base
         $data['iTotalDisplayRecords'] = $total;
         $data['sum'] =round( abs ( $sum_total ) ,2);
         $data['data'] = $this->db->query($main_sql,[($page?($page-1):0) * $size, intval( $size ) ])->getResult("array");
-        log_message('error',$this->db->getLastQuery());
-
+        // log_message('error',$this->db->getLastQuery());
         //log_message('error',json_encode([($page?:0) * $size, $size ]));
-
         return $this->toJson($data);
     }
 
@@ -170,7 +168,7 @@ class Vii extends Base
         $P['viiimage'] = $P['viiimage'] ? join(',',$P['viiimage']) : '';
         $P['invoiceamount'] = str_replace(',','',$P['invoiceamount']);
 
-        if ( ($P['isentrance'] == 0 || !$P['isentrance'] || !$P['invoicerid'])) {
+        if ( ($P['isentrance'] == 0 || !$P[' e'] || !$P['invoicerid'])) {
             $db = new \App\Models\Setup\Products();
             if ($product_data = $db->where('id',$P['productid'])->first()) {
                 $P['productname'] = $product_data['name'];
@@ -179,7 +177,6 @@ class Vii extends Base
         }
 
         $tax_rate = floatval($P['taxreturnrate']);
-
         $P['taxreturnrate'] = ( $P['isentrance'] == 0 && $tax_rate > 1 ) ? ( $tax_rate / 100 ) : ($tax_rate??0);
 
         $P['type'] = ckAuth() ? 1 : 2;
@@ -361,10 +358,9 @@ class Vii extends Base
         $payment_amount = $this->pay_db->collect_to( ['receivername' => $invoicer_data ? $invoicer_data['name']:'','projectid' => $argc['projectid']] );
         $vii_amount = $this->db->collect_to( $argc );
 
-        if ( $vii_amount &&  $payment_amount )
-            $resp = ($vii_amount - $payment_amount);
+        if ( $vii_amount &&  $payment_amount ) $resp = ($vii_amount - $payment_amount);
         else if ( $vii_amount ) $resp = $vii_amount;
-        else if ( $payment_amount ) $resp =( 0 - $payment_amount );
+        else if ( $payment_amount ) $resp = ( 0 - $payment_amount );
         else $resp = false;
         return  $resp;
     }

@@ -1,14 +1,18 @@
 <?php
 function vii_apply_taxrefund( $data ) {
-    if ( !$data['project'] || !$data['entry']) return false;
 
-    //
-    if ( $data['project']['taxrefund'] == 3 || $data['project']['taxrefund'] == 4 || $data['project']['receiptstatus'] == 0 || $data['project']['viistatus'] == 0 || $data['entry']['status'] != 5 ) return false;
+    if ( !$data['project'] || !$data['entry'] ||
+        $data['project']['taxrefund'] == 3 ||
+        $data['project']['taxrefund'] == 4 ||
+        $data['project']['receiptstatus'] == 0 ||
+        $data['project']['viistatus'] == 0 ||
+        $data['entry']['status'] != 5 )
+        return false;
 
     $db = new \App\Models\Declares\Vii();
 
-    if ( $db->where(['projectid'=>$data['project']['ID'], 'status <'=>3])->first() ) return false;
-    if ( !$db->where(['projectid'=>$data['project']['ID'], 'status >='=>3])->first() ) return false;
+    if ( $db->where(['projectid'=>$data['project']['ID'], 'status <'=>3])->first() || !$db->where(['projectid'=>$data['project']['ID'], 'status >='=>3])->first() ) return false;
+
     if ( !$db->where(['projectid'=>$data['project']['ID'], 'status >='=>5])->first() ) return true;
 
     if ( ckAuth('admin') || ckAuth('all') ) return true;
@@ -27,6 +31,7 @@ function confirm_finish_vii( $data ){
     if($db->where(['projectid'=>$data['project']['ID'],'status<='=>2])) return false;
 
     if($db->where(['projectid'=>$data['project']['ID'],'status>'=>2])) return false;
+
     return true;
 }
 
@@ -151,7 +156,7 @@ function notice_add(
             'id' => 0,
             'notificationid' => rand(100000, 999999),
             'topickey' => $Key,
-            'message' => \App\Libraries\LibComm::$tipic[$Key],
+            'message' => \App\Libraries\LibComm::$tipic[$Key]['name'],
             'url' => $Url,
             'type' => $Opt,
             'relationid' => $RelationId,
@@ -179,7 +184,7 @@ function notice_role_users($RelationId,$RelationTb,$key,$RecType){
     delete_notice(['relationid'=>$RelationId,'relationtb'=>$RelationTb]);
     // 表信息
     $data = $db->from($RelationTb,true)->where(['id'=>$RelationId])->first();
-    $argc = ['companyid'=>$data['companyid'],'customerid'=>($data['customerid']??0),'type'=>($RecType == 2) ? ['ent','customer'] : (($RecType == 0) ? 'ent' : 'customer')];
+    $argc = ['companyid'=>$data['companyid'],'customerid'=>($data['customerid']?:0),'type'=>($RecType == 2) ? ['ent','customer'] : (($RecType == 0) ? 'ent' : 'customer')];
     log_message('error','users_argc:'.json_encode($argc));
     if ( $RelationTb == 'customer') {
         $argc['customerid'] = $data['id']; $data['customerid'] = $data['id'];
@@ -267,10 +272,7 @@ function balance( $customerId =  null , $allocated = 2 , $id = 0 ) {
 function get_notice_roles($topic = '', $roleid = 0, $userId = 0){
     $db = new \App\Models\Message\Topic();
     $user_data = $db->asArray()->from('admin_users',true)->where('id',$userId)->first();
-    if($data = $db->from('noticetopic as a',true)
-        ->search(['topic' => $topic,'roleid'=>$roleid,'a.companyid'=>$user_data['companyid']??0])->first())
-    {
-
+    if($data = $db->from('noticetopic as a',true)->search(['topic' => $topic,'roleid'=>$roleid,'a.companyid'=>($user_data['companyid']??0)])->first()){
         return $data;
     }
     return false;

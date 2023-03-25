@@ -1,9 +1,16 @@
+<?php
+    $is_has_agent = hasRole('agent');
+?>
 <div class="content">
     <div class="panel panel-flat">
         <div class="panel-body">
             <form class="frm_data_census form-horizontal">
                     <div class="col-md-12">
-                        <?=\App\Libraries\LibComp::select('STATISTICS',['class'=>'select inline selects-120','name'=>'project','role'=>'min'])?>
+                        <?php if ( !$is_has_agent || hasRole('admin') ):?>
+                        <?=\App\Libraries\LibComp::select('STATISTICS',['class'=>'select inline selects-120','name'=>'project','role'=>'min'],'maoli')?>
+                        <?php else :?>
+                        <input name="project" value="maoli" type="hidden">
+                        <?php endif;?>
                         <?=\App\Libraries\LibComp::select('CURRENCY',['class'=>'select inline selects-120','name'=>'currency','role'=>'min'])?>
 
                         <?php if ( ckAuth(false) ):?>
@@ -12,7 +19,7 @@
 
                         <input type="text" class="form-control inline input-120" name="sdate" onclick="WdatePicker({})" placeholder="起始日期" autocomplete="off">
                         <input type="text" class="form-control inline input-120" name="edate" onclick="WdatePicker({})" placeholder="结束日期" autocomplete="off">
-                        <a type="button" class="btn btn-primary"
+                        <a type="button" class="btn btn-primary" id="todo"
                            href="/data/census/todo" onclick="return comm.doRequest(this.href,$('.frm_data_census').serialize(),(resp)=>{$('.data').html(resp)})">
                             <i class="icon icon-list"></i> 统计
                         </a>
@@ -28,3 +35,10 @@
         </div>
     </div>
 </div>
+<?php if ( $is_has_agent ):?>
+<script>
+    setTimeout(()=>{
+        $('#todo').click();
+    },200);
+</script>
+<?php endif;?>

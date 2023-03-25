@@ -12,11 +12,11 @@ class Init extends Base {
         if ( $run_type == 'users' )
             $this->_admin_users();
 
-        if ( $run_type == 'products' )
-            $this->_products();
-
-        if ( $run_type == 'goods' )
-            $this->_goods();
+//        if ( $run_type == 'products' )
+//            $this->_products();
+//
+//        if ( $run_type == 'goods' )
+//            $this->_goods();
     }
 
     // 初始化用户信息

@@ -9,28 +9,28 @@
     <div class="form-group">
         <label class="col-md-2 control-label">名称 <span class="text-danger">*</span> </label>
         <div class="col-md-10">
-            <input name="companyname" class="form-control" required="required" placeholder="请输入 境外贸易商名称">
+            <input name="companyname" class="form-control" required="required" placeholder="请输入 贸易商名称">
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-md-2 control-label">地址 <span class="text-danger">*</span> </label>
         <div class="col-md-10">
-            <input name="address" class="form-control" required="required" placeholder="请输入 境外贸易商地址">
+            <input name="address" class="form-control" required="required" placeholder="请输入 贸易商地址">
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-md-2 control-label">联系人 </label>
         <div class="col-md-10">
-            <input name="contractor" class="form-control"  placeholder="请输入 境外贸易商联系人">
+            <input name="contractor" class="form-control"  placeholder="请输入 贸易商联系人">
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-md-2 control-label">联系电话 </label>
         <div class="col-md-10">
-            <input name="phone" class="form-control"   placeholder="请输入 境外贸易商联系电话">
+            <input name="phone" class="form-control"   placeholder="请输入 贸易商联系电话">
         </div>
     </div>
 </form>

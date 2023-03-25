@@ -40,7 +40,7 @@ class Payment extends Base
                 ->paginates( $this->_page(), $this->_size() );
         }
         foreach ( $data['data'] as $row ) {
-            $row->approvedt = $row->approvedt ? date('Y-m-d',strtotime($row->approvedt)) : $row->paymentdate;
+            // $row->approvedt = $row->approvedt ? date('Y-m-d',strtotime($row->approvedt)) : $row->paymentdate;
             $row->paystatus = ($row->type == 3 ? '其他' : ($row->type == 2 ? '物流' : ($row->type == 5 || $row->type == 4 ? '费用' :  $this->_pay_compare(['receivername'=>$row->receivername,'projectid'=>$row->projectid,'customerid'=>$row->customerid]))));
         }
 
@@ -54,7 +54,8 @@ class Payment extends Base
         $project_db = new \App\Models\Declares\Project();
         if ( $this->request->getMethod() == 'post') {
             $P['type'] = ($P['type'] == 9)?1:$P['type'];
-            if ( empty( $P['amount'] ) || $P['amount'] < 0 ) return $this->setError('请输入有效的付款金额');
+            //if ( empty( $P['amount'] ) || $P['amount'] < 0 ) return $this->setError('请输入有效的付款金额');
+            if ( empty( $P['amount'] ) ) return $this->setError('请输入有效的付款金额');
             $P['status'] = 0;
 
             if( empty( $P['receivername'] ) && ( $P['type'] == 2 || $P['type'] == 3 ) ){
@@ -84,7 +85,7 @@ class Payment extends Base
             // 新增
             if( !$P['projectid'] || empty($P['projectid']) ){
                 $db = new \App\Models\Declares\Project();
-                if ( $db->save( ['id' => 0, 'customerid' => $P['customerid'],'isentrance' => 0,'status' => 1] ) ) {
+                if ( $db->save( ['id' => 0, 'customerid' => $P['customerid'],'isentrance' => $P['isentrance']??0,'status' => 1] ) ) {
                     $P['projectid'] = $db->getInsertID();
                 }
             }
@@ -180,16 +181,20 @@ class Payment extends Base
             // 保存操作
             if ( $this->request->getMethod() == 'post' ) {
                 $payment_data['transfertext'] = 'TRANSFER';     // 转出标识
-                if ( empty($payment_data['copysessionid']) || $payment_data['copysessionid'] == 0 ) {
-                    $payment_data['copysessionid'] = $payment_data['id'];
-                    $this->db->save( $payment_data );
-                }
                 $old_project_id = $payment_data['projectid'];
+
                 $valid_amount = $this->_available_payment_balance( $payment_data['id'] );
 
                 if ( $valid_amount < $P['amount'] ) {
                     return $this->toJson('可转金额不足,可转金额:(' . number_format($valid_amount) . ')');
                 }
+
+                if ( empty($payment_data['copysessionid']) || $payment_data['copysessionid'] == 0 ) {
+                    $payment_data['transfer_amount'] = $P['amount'];
+                    $payment_data['copysessionid'] = $payment_data['id'];
+                    $this->db->save( $payment_data );
+                }
+                $payment_data['transfer_amount'] = 0;
 
                 if ( !$payment_data['usage'] ) $payment_data['usage'] = 2;
                 $payment_data['amount'] = (-1) * $P['amount'];
@@ -221,7 +226,7 @@ class Payment extends Base
                 $payment_data['transfer'] = 1;
                 // 保存新转出业务
                 if ( $this->db->save( $payment_data ) ) {
-                    $Id = $payment_data['id']??$this->db->getInsertID();
+                    $Id = $payment_data['id']?:$this->db->getInsertID();
                     // 成功添加通知
                     notice_add( $Id, 'TOPIC_TRANSFERED_RECEIPT', 'receipt', '/notices/project',0, 0);
                     return $this->toJson('转出成功');

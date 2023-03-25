@@ -62,7 +62,7 @@
     <div class="form-group">
         <label class="col-lg-3 control-label">付款金额<span class="text-danger">*</span></label>
         <div class="col-lg-9">
-            <input name="amount" required="required" value="<?=$data['amount']?>" min="<?=($data['balance']>0?1:0)?>" max="<?=($data['balance']>0?round($data['balance'],2):0)?>" placeholder="最大可付款金额: <?=number_format($data['balance'] ,2)?>" class="form-control" onkeypress="return comm.iNum()">
+            <input name="amount" required="required" value="<?=$data['amount']?>" max="<?=($data['balance']>0?round($data['balance'],2):0)?>" placeholder="最大可付款金额: <?=number_format($data['balance'] ,2)?>" class="form-control" onkeypress="return comm.iNum()">
         </div>
     </div>
 

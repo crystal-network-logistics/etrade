@@ -5,23 +5,21 @@ $roles_data = $power->get_roles_data();
 ?>
 <form id="frm_account" class="form-horizontal" action="/account/cust/save">
     <input type="hidden" name="id" value="<?=$model?$model["id"]:''?>">
-    <input type="hidden" name="type" value="ent">
+    <input type="hidden" name="type" value="customer">
     <div class="custom">
-    <div class="form-group">
-        <label class="col-lg-2 control-label">归属公司<span class="text-danger">*</span> </label>
-        <div class="col-lg-10">
-<!--            <select class="select" name="companyid" required="required"></select>-->
-            <?=\App\Libraries\LibComp::get_company(['class'=>'control-primary','required'=>'required','name'=>'companyid'],$model?$model["companyid"]:'')?>
+        <div class="form-group">
+            <label class="col-lg-2 control-label">归属公司<span class="text-danger">*</span> </label>
+            <div class="col-lg-10">
+                <?=\App\Libraries\LibComp::get_company(['class'=>'control-primary','required'=>'required','name'=>'companyid'],$model?$model["companyid"]:'')?>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="col-lg-2 control-label">所属客户<span class="text-danger">*</span> </label>
-        <div class="col-lg-10">
-<!--            <select class="select" name="customerid" required="required"></select>-->
-            <?=\App\Libraries\LibComp::get_company(['class'=>'control-primary','required'=>'required','name'=>'customerid'],$model?$model["customerid"]:'')?>
+        <div class="form-group">
+            <label class="col-lg-2 control-label">所属客户<span class="text-danger">*</span> </label>
+            <div class="col-lg-10">
+                <?=\App\Libraries\LibComp::get_company(['class'=>'control-primary','required'=>'required','name'=>'customerid'],$model?$model["customerid"]:'')?>
+            </div>
         </div>
-    </div>
     </div>
     <div class="form-group">
         <label class="col-lg-2 control-label">登录帐户 <span class="text-danger">*</span> </label>

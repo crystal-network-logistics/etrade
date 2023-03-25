@@ -116,9 +116,6 @@
 
         });
 
-        // setTimeout(()=>{
-        //     load_products_data();
-        // },500);
         // 全选
         $('input[name=ckall],input[name=ck_all]').on('click',function () {
             $('[name=sck]:checkbox').prop('checked',this.checked);
@@ -163,7 +160,6 @@
     function display_choise_data(){
         var mGuid = localStorage.getItem('mGuid');
         $(`#${mGuid} .btn-submit`).text(`确定选择 (已选 ${temp_data.length})`)
-        //$('.sp_choise').text(temp_data.length);
     }
 
     function load_products_data(){

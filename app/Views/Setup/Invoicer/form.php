@@ -1,5 +1,5 @@
 <?php
-$model = isset( $data['detail'] ) ? $data['detail'] : false;
+    $model = isset( $data['detail'] ) ? $data['detail'] : false;
 ?>
 <aside class="mask works-mask">
     <div class="mask-content">

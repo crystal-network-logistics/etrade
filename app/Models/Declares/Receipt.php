@@ -7,7 +7,7 @@ class Receipt extends \App\Models\BaseModel
 {
     protected $table = 'receipt';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['batchid', 'customerid', 'projectid', 'payerid', 'payername', 'payercountry', 'realityamount', 'amount', 'exchangerate', 'createdat', 'receiptdate', 'realityDate', 'claimid', 'note', 'currency', 'item', 'status', 'vii', 'bankreceipt', 'accounttype', 'usage', 'approved', 'copysessionid', 'transfer', 'companyid', 'approvedt', 'createtorid', 'createtor', 'formId', 'approvedid', 'approvedip','realityDate'];
+    protected $allowedFields = ['batchid', 'customerid', 'projectid', 'payerid', 'payername', 'payercountry', 'realityamount', 'amount', 'exchangerate', 'createdat', 'receiptdate', 'realityDate', 'claimid', 'note', 'currency', 'item', 'status', 'vii', 'bankreceipt', 'accounttype', 'usage', 'approved', 'copysessionid', 'transfer', 'companyid', 'approvedt', 'createtorid', 'createtor', 'formId', 'approvedid', 'approvedip','realityDate','transfer_amount'];
 
     protected $beforeInsert = ['data_before'];
     protected $beforeUpdate = ['data_before'];
@@ -76,13 +76,12 @@ class Receipt extends \App\Models\BaseModel
 
     // 收入情况 汇总
     public function receipt_sum( $argc , $fee = 0 ){
-        if ( $receipt_data = $this->select( 'sum( amount * exchangerate ) as statsum' )->search( $argc )->first() ) {
+        if ( $receipt_data = $this->select( 'sum( amount * exchangerate ) as statsum' )->where('status > ',0)->search( $argc )->first() ) {
             // 客户信息
             $customer_data = $this->from('customer',true )->where('id',$argc['customerid'])->first();
-            $statsum = $receipt_data['statsum']??0;
+            $statsum = $receipt_data['statsum']?:0;
             // 计划退税
-            return ($fee == 0)
-                ? (($customer_data['commissionfeemin'] > 0 && $customer_data['commissionfeemin'] > $statsum ) ? $customer_data['commissionfeemin'] : ( $statsum * $customer_data['commissionfee'] ) )
+            return ($fee == 0)? (($customer_data['commissionfeemin'] > 0 && $customer_data['commissionfeemin'] > $statsum ) ? $customer_data['commissionfeemin'] : ( $statsum * $customer_data['commissionfee'] ) )
                 : (($customer_data['taxrefundfeemin'] > 0 && $customer_data['taxrefundfeemin'] > $statsum ) ? ($customer_data['taxrefundfeemin']) : ( $statsum * $customer_data['taxrefundfee'] ) );
         }
         return 0;

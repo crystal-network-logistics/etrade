@@ -7,7 +7,7 @@ class Payment extends \App\Models\BaseModel
 {
     protected $table = 'payment';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['projectid', 'type', 'receivername', 'amount', 'bank', 'bankaccount', 'currency', 'note', 'paymentdate', 'realpaydate', 'exchangerate', 'receiverid', 'receiver_tag', 'save_tag', 'status', 'bankreceipt', 'copysessionid', 'transfer', 'createtime', 'companyid', 'customerid', 'approvedt', 'createtor', 'formId', 'approvedid', 'approvedip'];
+    protected $allowedFields = ['projectid', 'type', 'receivername', 'amount', 'bank', 'bankaccount', 'currency', 'note', 'paymentdate', 'realpaydate', 'exchangerate', 'receiverid', 'receiver_tag', 'save_tag', 'status', 'bankreceipt', 'copysessionid', 'transfer', 'createtime', 'companyid', 'customerid', 'approvedt', 'createtor', 'formId', 'approvedid', 'approvedip','transfer_amount'];
 
     protected $beforeUpdate = ['data_before'];
     protected $beforeInsert = ['data_before'];
@@ -68,7 +68,7 @@ class Payment extends \App\Models\BaseModel
     public function collect_to( $param ){
         $data = $this->select('sum( amount * exchangerate ) as amount')
             ->search( $param )
-            ->where(['type'=>1,'status>'=>0])
+            ->where(['type'=>1,'status >'=>0])
             ->first();
         return $data ? $data['amount'] : 0;
     }

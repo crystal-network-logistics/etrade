@@ -29,9 +29,9 @@
             <tbody>
             <?php
             $i = 0;
-            foreach($topic as $key=>$val) { ?>
+            foreach( $topic as $key=>$item ) { ?>
                 <tr>
-                    <td width="<?=((100/($total + 1)))?>%"><?= ($i+1) ?>. <?=$val?></td>
+                    <td width="<?=((100/($total + 1)))?>%"><?= ($i+1) ?>. <?=$item['name']?></td>
                     <?php foreach($roles_data as $row) {?>
                         <td width="<?=((100/($total + 1)))?>%">
                             <?php if( session('id') != $row['creatorId'] ) {

@@ -5,7 +5,7 @@ $item = $data['item']; $tag = time() + (float)microtime()*1000000;
 ?>
 <div class="row" name="div" id="<?=$tag?>" style="border-radius: 2px">
     <div name="cld" style="background-color:rgb(243,245,249);margin-left:15px;margin-right:15px;margin-bottom:15px;">
-        <div class="customrow">
+        <div class="customrow" style="border-radius: 3px;">
             <div class="idblock <?=$tag?>"> 1 </div>
             <div class="productname">
                 <input type="hidden" name="Goods[tags][]" value="<?=$tag?>">
@@ -49,7 +49,7 @@ $item = $data['item']; $tag = time() + (float)microtime()*1000000;
                     <td style="padding:5px"><input name="Goods[ProductAmount][]" value="<?=($item['ProductAmount']??'')?>" onchange="$(this).data('change','true');table_input_calc();" data-change='false' id="pa<?=$tag?>" size="10" onkeypress="return comm.iNum()" required="required"></td>
                     <td style="padding:5px"><?=\App\Libraries\LibComp::select(($isim=='none' ? 'UNITEN' :'UNIT'),['name'=>'Goods[productunit][]',"style"=>'width:100px','class'=>'select select-xs'],is_numeric($item["productunit"])?(\App\Libraries\LibComm::Unit($item["productunit"])):$item["productunit"],false)?></td>
                     <td style="padding:5px"><input name="Goods[ProductUnitPrice][]"  value="<?=($item['ProductUnitPrice']??'')?>" onchange="$(this).data('change','true');table_input_calc();" data-change='false' id="puc<?=$tag?>" size="10" onkeypress="return comm.iNum()"></td>
-                    <td style="padding:5px;color:red" ><input name='Goods[ProductUnitTotalPrice][]' value="<?=($item['ProductUnitTotalPrice']??($item["ProductAmount"] * $item["ProductUnitPrice"]))?>" onchange="$(this).data('change','true');table_input_calc();" id="sum<?=$tag?>" size="10" data-change='false' value="<?php echo number_format(($item["ProductUnitTotalPrice"]? $item["ProductUnitTotalPrice"] : ( $item["ProductAmount"] * $item["ProductUnitPrice"] )),2)?>" onkeypress="return comm.iNum()"></td>
+                    <td style="padding:5px;color:red" ><input name='Goods[ProductUnitTotalPrice][]' onchange="$(this).data('change','true');table_input_calc();"  id="sum<?=$tag?>" size="10" data-change='false' value="<?php echo number_format(($item["ProductUnitTotalPrice"]?: ( $item["ProductAmount"] * $item["ProductUnitPrice"] )),2)?>" onkeypress="return comm.iNum()"></td>
                     <td style="padding:5px;"><input name="Goods[officialamount][]" value="<?=($item['officialamount']??'')?>" size="10" id="officialamount<?=$tag?>" onkeypress="return comm.iNum()"></td>
                     <td style="padding:5px" ><?=$item["officialunit"]?><input type="hidden" id="officialunit<?=$tag?>" name="Goods[officialunit][]" value="<?php echo is_numeric($item["officialunit"])?(\App\Libraries\LibComm::Unit($item["officialunit"])):$item["officialunit"]?>"></td>
                     <td style="padding:5px;width:120px;display: <?php echo $isim?>"><div style="width:120px;overflow:hidden;text-overflow: ellipsis;" title="<?=$item["invoicer"]?>"><?=$item["invoicer"]?></div></td>
@@ -60,6 +60,7 @@ $item = $data['item']; $tag = time() + (float)microtime()*1000000;
         </div>
     </div>
 </div>
+
 <script>
     $('#<?=$tag?> .div_select select').select2({minimumResultsForSearch:-1})
     $('#<?=$tag?> .div_select select:eq(0),#<?=$tag?> table>tbody select').select2()

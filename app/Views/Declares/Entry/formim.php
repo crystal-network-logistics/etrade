@@ -58,7 +58,7 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
             <div class="col-md-3">
                 <div class="form-group">
                     <label>境内收货人<span class="red">*</span> <a href="/setup/overseas/add?cid=<?=$CustomerID?>&type=1" class="hModal label bg-success" lang="新增 境内贸易商"> 新增 </a></label>
-                    <?=\App\Libraries\LibComp::get_overseas(['customerid'=>$CustomerID,'type'=>1],['name'=>'domesticid','class'=>'select',"required"=>"required"],$entry?$entry['businessid']:'')?>
+                    <?=\App\Libraries\LibComp::get_overseas(['customerid'=>$CustomerID,'type'=>1],['name'=>'domesticid','class'=>'select',"required"=>"required"],$entry?$entry['domesticid']:'','境内贸易商')?>
                 </div>
             </div>
             <div class="col-md-3">

@@ -3,6 +3,7 @@
     $entry = (object) $data['entry'];
     $goods = $data['goods'];
     $company = (object) \App\Libraries\LibForm::company( $model->companyid );
+    // log_message('error',"project:".json_encode($model));
 ?>
 <style>
     table{font-family:新宋体;}
@@ -11,7 +12,7 @@
     .tbd1{border-right: 1px solid #000;border-bottom: 1px solid #000;padding:7px; font-size: 12px;width:20%}
 </style>
 <div style="position: relative">
-    <img src="/resource/assets/images/logo.png" width="200" height="35" style="position: absolute;top: 20px;left: 10px;width: 200px;">
+    <img src="<?=$company->logo?:''?>" width="200" height="35" style="position: absolute;top: 20px;left: 10px;width: 200px;">
     <div style="padding-left: 240px;">
         <p style="line-height:18px;font-size: 13px;">
             <?=($company ? $company->name : '--')?>
@@ -53,11 +54,11 @@
             $goodsName .= '<td class="tbd1">' . strval($key + 1) . '. ' . $val->name . '</td>';
             $hs .= '<td class="tbd1">' . $val->hscode . '</td>';
             $cots .= '<td class="tbd1">' . number_format($val->ProductAmount) . (is_numeric($val->productunit)?(Utility::Unit($val->productunit)):$val->productunit).'</td>';
-            $ckamt .= '<td class="tbd1">' . number_format(($val->ProductUnitTotalPrice ?? ($val->ProductAmount *  $val->ProductUnitPrice)),2).' '. ($entry && ($entry->currency) ? $entry->currency : '').'</td>';
+            $ckamt .= '<td class="tbd1">' . number_format(($val->ProductUnitTotalPrice ?? ($val->ProductAmount *  $val->ProductUnitPrice)),4).' '. ($entry && ($entry->currency) ? $entry->currency : '').'</td>';
             $jpamt .= '<td class="tbd1">' . number_format($val->invoiceamount,2). ' (RMB)</td>';
             $pkcts .= '<td class="tbd1">' . number_format($val->ProductPackageAmount) .' '. ($entry && ($entry->totalpackagemode) ? $entry->totalpackagemode : '').' </td>';
-            $weight .= '<td class="tbd1">' . number_format($val->ProductGrossWeight,4) . ' KGS</td>';
-            $net .= '<td class="tbd1">' . number_format($val->ProductNetWeight,4) . ' KGS</td>';
+            $weight .= '<td class="tbd1">' . number_format($val->ProductGrossWeight,2) . ' KGS</td>';
+            $net .= '<td class="tbd1">' . number_format($val->ProductNetWeight,2) . ' KGS</td>';
         }
     }else{
         $td = '';
@@ -134,15 +135,19 @@
         </td>
         <td colspan="3" class="tbd">
             <?php if($model && $entry) {?>
-            <?php $Bussniess = $entry?(\App\Libraries\LibForm::overseas( $entry->businessid )):null;?>
+            <?php $Bussniess = (object) ($entry?(\App\Libraries\LibForm::overseas( $entry->businessid )):null);?>
             <p><?=($Bussniess?$Bussniess->companyname:($entry?$entry->businessman:''))?></p>
             <p><?=($Bussniess?$Bussniess->address:'')?></p>
             <p><?=($Bussniess?$Bussniess->contractor:'')?></p>
             <p><?=($Bussniess?$Bussniess->phone:'')?></p>
             <?php }?>
+
+            <?php
+            //log_message('error',"Bussniess:".json_encode($Bussniess));
+            ?>
         </td>
         <td class="tbd">唛头</td>
-        <td colspan="3" class="tbd"></td>
+        <td colspan="3" class="tbd"><?=($entry->kama?:'')?></td>
     </tr>
     <tr style=";height:29px">
         <td  class="tbd">

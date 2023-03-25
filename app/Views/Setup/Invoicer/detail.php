@@ -72,7 +72,14 @@
     </tr>
 
     <tr>
-        <td style="vertical-align: middle">开票人产品</td>
+        <td style="vertical-align: middle">
+            开票人产品
+            <?php if ( $model['status'] == 3 && ckAuth(false)) :?>
+            <a class="hModal label bg-success-300" data-size="lg" href="/setup/products/binder_invoicer?id=<?=$model['id']?>" data-group="invoicer_products">
+                绑定开票人产品
+            </a>
+            <?php endif;?>
+        </td>
         <td colspan="3">
             <?php if($model['products']) :?>
             <?php foreach ( $model['products'] as $k=>$item) :?>
@@ -92,3 +99,4 @@
         <?php endforeach;?>
     <?php endif;?>
 </h6>
+

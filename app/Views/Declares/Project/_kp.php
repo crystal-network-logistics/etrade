@@ -5,7 +5,7 @@
     $goods = (object) $data['goods'];
     $company = (object) \App\Libraries\LibForm::company( $model->companyid );
     $Operators = \App\Libraries\LibComp::get_owner_data(['companyid' => $model->companyid,'power' => ['owner','operator']]);
-    $owner = count($Operators)>0 ? $Operators[0] : false;
+    $owner = (array) \App\Libraries\LibForm::owner($model->customerid);//count($Operators) > 0 ? ( (array) $Operators[0] ) : false;
 ?>
 <style>
     * { font-family: SimSun }
@@ -70,7 +70,6 @@
 <br />
 
 <p style="font-size: 18px;font-weight: bold;">请将业务号  <?php echo $model->BusinessID;?>  打在备注中,并连同已盖章的采购合同一并寄到我司.</p>
-
 <table width="100%">
     <tr>
         <td vertical-align="middle" align="right" width="120" class="secondcol" >寄票地址：</td>
@@ -79,7 +78,12 @@
             <?=$company->name?><br/>
             <?=$company->address?><br/>
 
-            收件人：<?php echo ($owner)?$owner->nickname:'前台'?>&nbsp;&nbsp;电话：<?php echo $owner?$owner->tel:'--'?>
+            <?php if ($owner && $owner['tel'] && $owner['nickname']) :?>
+                收件人：<?=$owner['nickname']?>&nbsp;&nbsp;电话：<?=$owner['tel']?>
+            <?php else :?>
+                收件人：黄欣&nbsp;&nbsp;电话：021-61112962
+            <?php endif;?>
+
         </td>
     </tr>
 </table>

@@ -7,8 +7,8 @@
     <input type="hidden" name="id" value="<?=$vii_data?$vii_data['id']:'0'?>">
     <input name="guid" value="<?=create_form()?>" type="hidden">
     <input type="hidden" name="projectid" value="<?=$vii_data?$vii_data['projectid']:''?>">
-    <input type="hidden" name="isentrance" value="<?=$vii_data['isentrance']??0?>">
-    <input type="hidden" name="customerid" value="<?=$vii_data['customerid']??0?>">
+    <input type="hidden" name="isentrance" value="<?=$vii_data['isentrance']?:0?>">
+    <input type="hidden" name="customerid" value="<?=$vii_data['customerid']?:0?>">
     <div class="form-group">
         <label class="col-lg-3 control-label">是否已做报关资料:</label>
         <div class="col-lg-9" style="margin-top: 8px;">

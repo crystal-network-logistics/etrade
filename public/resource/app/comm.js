@@ -294,7 +294,8 @@ var comm = {
         return (/[\d.]/.test(String.fromCharCode(event.keyCode)));
     },
     fMoney:function(s,type){
-        return new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2,minimumFractionDigits:2}).format(s)
+        return (s > 0 && s) ?  new Intl.NumberFormat("zh-CN",{maximumFractionDigits:(type && type >=2?type:4),minimumFractionDigits:2}).format(s) : 0;
+
         if(!/^(-|\+)?(\d+)(\.\d+)?$/.test(s)){
             return "0.00";
         }
@@ -797,7 +798,6 @@ var comm = {
             $(`#${mGuid}`).modal('hide').remove();
             localStorage.setItem('mGuid', guid);
         }
-        //$('span[role=status],div.modal-backdrop').remove();
         var name = (options && options.title) ? options.title : '',view = '';
         $.ajaxSetup({async:false});
         if ( url ) {
@@ -937,6 +937,9 @@ var comm = {
             oPswd.val( comm.get_cookie(comm.str_pw) );
             oRemember[0].checked = true;
         }
+    },
+    reload_page(resp){
+        setTimeout(()=>{window.location.reload()},3000);
     }
 };
 

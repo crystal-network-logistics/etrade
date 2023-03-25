@@ -93,6 +93,7 @@ class Notify extends Base
             c.currency,
             b.isentrance,
             d.customername,
+            notification.type as nt,
             format(ifnull((select sum( ProductUnitPrice * ProductAmount ) from goods where b.id=goods.projectid),0),2) as bgamount
             ")
             ->search( $form )
@@ -123,7 +124,7 @@ class Notify extends Base
             ->search( $form )
             ->paginates($this->_page(),$this->_size());
 
-        log_message('error','message_entryform:'.$this->db->getLastQuery());
+        //log_message('error','message_entryform:'.$this->db->getLastQuery());
         return $data;
     }
     // 增票数据
@@ -277,6 +278,37 @@ class Notify extends Base
             return $this->toJson('已查看成功!');
         }
         return $this->setError('操作失败');
+    }
+
+    // 清除所有无效或只读通知
+    public function clearall(){
+        $this->actionAuth();
+        $db = new \App\Models\Form();
+        $data = $this->db->where('receiverid' , session('id'))->findAll();
+        $success = 0;
+        foreach ( $data as $item ) {
+            $has_delete = false;
+            if ( $item['type'] == 0 ) {
+                $has_delete = true;
+            } else {
+                if ( !$db->from($item["relationtb"],true)->where('id', $item['relationid'])->first() ) {
+                    $has_delete = true;
+                } else {
+                    $topic = \App\Libraries\LibComm::$tipic[$item["topickey"]]; $argc = ['id'=>$item['relationid']];
+                    foreach ( $topic as $k=>$v ) {
+                        if ( $k != 'name' ) $argc[$k] = $v;
+                    }
+                    if ( !$db->from( $item["relationtb"] ,true)->where($argc)->first() ) {
+                        $has_delete = true;
+                    }
+                    // log_message('error','delete_message:'.$db->getLastQuery());
+                }
+            }
+            if ( $has_delete ) {
+                $this->db->where('id', $item['id'])->delete(); $success++;
+            }
+        }
+        return $this->toJson("已成功清除 $success 条通知!");
     }
 
     public function save_notice_roles(){

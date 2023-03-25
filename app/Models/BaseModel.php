@@ -34,11 +34,8 @@ class BaseModel extends Model{
                         $this->orderBy($val,$key);
                         break;
                     default:
-                        if( strpos($key,'.') !== false ){
-                            //else ( in_array( $pres[1] , $this->allowedFields) || $pres[1] == $this->primaryKey)
-                            {
-                                $this->where($key,$val);
-                            }
+                        if( strpos($key,'.') !== false ){//else ( in_array( $pres[1] , $this->allowedFields) || $pres[1] == $this->primaryKey)
+                            $this->where($key,$val);
                         }else{
                             if( in_array($key, $this->allowedFields) || $key == $this->primaryKey) $this->where($key,$val);
                         }
@@ -136,7 +133,8 @@ class BaseModel extends Model{
         $Ids =  where_auth() ;
         if ( !$comId ) $comId = 'companyid';
 
-        if( $Ids && $key)  $this->whereIn($key, $Ids);
+        if( $Ids && $key)
+            $this->whereIn($key, $Ids);
 
         if ( session('power') != 'all' )
             $this->where($comId , session('company') );
@@ -153,7 +151,7 @@ class BaseModel extends Model{
             }
             if ( $array['data']['customerid'] ) {
                 $customer_data = $db->from('customer', true)->where('id', $array['data']['customerid'])->first();
-                $array['data']['companyid'] = $customer_data?$customer_data['companyid']:0;
+                $array['data']['companyid'] = $customer_data ? $customer_data['companyid']:0;
             }
 
         } else {
@@ -162,12 +160,14 @@ class BaseModel extends Model{
             if (array_key_exists('customerid',$array['data']) && !$array['data']['customerid'] ) {
                 $array['data']['customerid'] = session('custId') ?session('custId'): 0;
             }
+
             if ( $array['data']['customerid'] ) {
                 $customer_data = $db->from('customer', true)->where('id', $array['data']['customerid'])->first();
                 $array['data']['companyid'] = $customer_data?$customer_data['companyid']:0;
             }else {
                 $array['data']['companyid'] = session('company');
             }
+
         }
         return $array;
     }

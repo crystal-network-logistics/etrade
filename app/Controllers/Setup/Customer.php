@@ -70,10 +70,7 @@ class Customer extends Base
     // 创建
     public function edit(){
         $this->actionAuth(true);
-        if ( !$model =
-            $this->db->asArray()->where('id',$this->U('id'))->first()
-        )
-            exit('参数错误');
+        if ( !$model = $this->db->asArray()->where('id',$this->U('id'))->first() ) exit('参数错误');
 
         $db = new \App\Models\Setup\Operator();
         $operator_data = $db->where('customerid',$this->U('id'))->findAll();

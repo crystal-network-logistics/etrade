@@ -87,7 +87,7 @@
                                                         <span class="ax-pos-left" style="width:2.4rem;"><i class="ax-iconfont ax-icon-shield-f"></i></span>
                                                         <input name="code" placeholder="输入验证码..." required="required" value="" autocomplete="off" type="text" minlength="4" maxlength="4">
                                                     </div>
-                                                    <a href="###" class="ax-form-img"><img src="/home/captcha?_=<?=time()?>" onclick="this.src='/home/captcha?_=<?=time()?>'"></a>
+                                                    <a class="ax-form-img" href="javascript:;"><img src="/home/captcha?_=<?=time()?>" onclick="this.src='/home/captcha?_=<?=time()?>'"></a>
                                                 </div>
                                             </div>
 

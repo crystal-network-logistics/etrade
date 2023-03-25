@@ -88,14 +88,15 @@
         var amount = $(`${frm_name} input[name=amount]`).val(), exchange = $(`${frm_name} input[name=exchangerate]`).val();
         $('#lb_total').text('￥ '+comm.fMoney(parseFloat(amount) * parseFloat(exchange)));
     })
-
+    var timeout = 0;
     $('#claim_pname').autocomplete({
         minChars: 2,
         lookup: function (query, done) {
             clearTimeout(timeout);
-            var keys = $('#pname').val();
+            var keys = $('#claim_pname').val();
             timeout = setTimeout(function (){
-                var customerid = $('#frm_receipt_create input[name=customerid]').val()
+                var customerid = $('#frm_receipt_claim_approve input[name=customerid]').val();
+
                 comm.doRequest('/setup/payer/auto_data',{ keys : keys ,customerid : customerid }, (resp)=> {
                     var data = [];
                     $.each(resp.data,function (k,v) {

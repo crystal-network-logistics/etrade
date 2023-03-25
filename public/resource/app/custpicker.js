@@ -53,6 +53,7 @@
     this.options = $.extend({}, Custpicker.DEFAULTS, $.isPlainObject(options) && options);
     this.placeholders = $.extend({}, Custpicker.DEFAULTS);
     this.active = false;
+    this.defaultValue = ((options.defaultValue == null || options.undefined || options.undefined) ? true : false);
     this.init();
   }
 
@@ -169,8 +170,10 @@
           selected: false
         });
       }
-      $select.html(this.getList(data)).val("").trigger('change');
-      //$select.html(this.getList(data));
+      if (this.defaultValue)
+        $select.html(this.getList(data)).val("").trigger('change');
+      else
+        $select.html(this.getList(data));
     },
 
     getList: function (data) {

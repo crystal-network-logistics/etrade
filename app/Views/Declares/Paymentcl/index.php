@@ -36,7 +36,9 @@ $is_has_confirm_paymentcl = ck_action('declares/project/confirm_paymentcl');
             <a class="btn bg-<?=!$project['isentrance']?'indigo-300':'primary'?> hModal" href="/declares/paymentcl/create?projectid=<?=$project['ID']?>&customerid=<?=$project['customerid']?>&isentrance=<?=$isentrance?>" data-call="load_paymentcl_data"><i class="icon icon-add"></i> 新增成本支付 </a>
         <?php endif;?>
 
-        <?php if( $is_has_confirm_paymentcl && confirm_payment( $data )) :?>
+        <?php if( $is_has_confirm_paymentcl
+            //&& confirm_payment( $data )
+        ) :?>
             <a class="btn btn-success" href="/declares/project/confirm_paymentcl?id=<?=$project['ID']?>"
                onclick="return comm.confirmCTL(this.href,'是否确认付清?',(resp)=>{ if( resp.code ) {setTimeout(()=>{window.location.reload()},3000);} else {_confirm(resp.msg);}})">
                 成本确认付清</a>
@@ -108,8 +110,9 @@ $is_has_confirm_paymentcl = ck_action('declares/project/confirm_paymentcl');
                             <?php endif; ?>
 
                         <?php endif;?>
+
                         <?php if($is_has_payment_delete) :?>
-                        buttons += ` <a href="/declares/paymentcl/delete?id=${full.id}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确认删除该条记录?',(resp)=>{load_paymentcl_data()})">删除</a>`;
+                            buttons += ` <a href="/declares/paymentcl/delete?id=${full.id}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确认删除该条记录?',(resp)=>{load_paymentcl_data()})">删除</a>`;
                         <?php endif;?>
 
                         return `<div class="text-right">${buttons}</div>`;

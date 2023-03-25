@@ -29,6 +29,12 @@ $routes->add('logout', 'Home::logout');
 $routes->add('register', 'Auth::register');
 $routes->add('forget', 'Auth::forget');
 $routes->add('passwd/(:any)', 'Auth::passwd/$1');
+$routes->add('zhuce', 'Home::zhuce');
+$routes->add('gologin', 'Home::gologin');
+$routes->add('agent', 'Home::agent');
+
+
+
 
 $routes->group('upload',function ($routes){
     $routes->add('dofile', 'Comm\Upload::dofile');

@@ -8,6 +8,8 @@
     $is_has_receipt_upfiles = ck_action('declares/receipt/upfiles');
     $is_has_receipt_viewdoc = ck_action('declares/receipt/viewdoc');
     $is_has_receipt_delete = ck_action('declares/receipt/delete');
+    // 撤消
+    $is_has_rollback = ck_action('declares/project/rollback');
 
     $isentrance = $project?$project['isentrance']:(isset($_REQUEST['isentrance']) ? $_REQUEST['isentrance'] : 0);
 ?>
@@ -46,6 +48,10 @@
                 <a class="btn btn-default" onclick="comm.Alert('没有达到确认收齐的条件，或者您没有确认收齐的权限！',false)">确认收齐</a>
             <?php else: ?>
                 <a class="btn btn-default">已收齐</a>
+
+                <?php if ( $is_has_rollback && $project['receiptstatus'] == 1 ):?>
+                    <a class="btn btn-danger" href="/declares/project/rollback/receipt?id=<?=$project["ID"]?>"  onclick="return comm.confirmCTL(this.href,'确定撤消收入收齐操作?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })"><i class="icon icon-forward"></i> 撤销收入收齐 </a>
+                <?php endif;?>
             <?php endif;?>
         <?php endif;
     endif;?>
@@ -89,7 +95,7 @@
                 },
                 { aTargets:[6],
                     mRender:function(data,full) {
-                        return (comm.fMoney(full.amount * full.exchangerate));
+                        return (comm.fMoney(full.amount * full.exchangerate,2));
                     }
                 },
                 { aTargets:[8],

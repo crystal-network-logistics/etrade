@@ -182,4 +182,9 @@ class Auth extends Base
         }
         return $this->setError('发送失败, 邮箱地址没有被注册绑定');
     }
+
+    public function test(){
+        $sms = new sms();
+        $sms->send_verify('15821045537','SMS_57190146',[rand(100000,999999),'一贸通']);
+    }
 }

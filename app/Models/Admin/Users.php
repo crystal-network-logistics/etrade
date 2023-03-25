@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 class Users extends \App\Models\BaseModel {
     protected $table = 'admin_users';
     protected $primaryKey = 'id';
-    protected $allowedFields = [ 'username', 'token', 'password', 'status', 'realname', 'email', 'tel', 'qq', 'customerid', 'companyname', 'products', 'validcode', 'createtime', 'type', 'openid', 'nickname', 'avatarUrl', 'province', 'city', 'activation_token', 'companyid', 'activated', 'source', 'login_lasttime', 'last_ip', 'comment','remark','power','post'];
+    protected $allowedFields = [ 'username', 'token', 'password', 'status', 'realname', 'email', 'type', 'tel', 'qq', 'customerid', 'companyname', 'products','phone', 'percentage', 'createtime', 'type', 'openid', 'nickname', 'avatarUrl', 'province', 'city', 'activation_token', 'companyid', 'activated', 'source', 'login_lasttime', 'last_ip', 'comment','remark','power','post'];
 
     protected $validationRules = [
         'username'     => 'is_unique[admin_users.username,id,{id}]',

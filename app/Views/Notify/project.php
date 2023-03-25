@@ -52,7 +52,7 @@
                     mRender:function(data,full){
                         var html = '<div class="text-right">';
 
-                        html += ` <a href="/declares/${(full.isentrance == 1)?'import':'project'}/view?id=${full.relationid}" class="label bg-success-300">详情</a>`;
+                        html += ` <a href="/declares/${(full.isentrance == 1)?'import':'project'}/view?id=${full.relationid}" class="label bg-success-300" target="_blank">详情</a> `;
 
                         if(full.nt == 0){
                             html += `<a href="/message/notify/delete?id=${full.id}" onclick="return comm.confirmCTL(this.href,'确认查看 操作?',(resp)=>{load_notice_project_data()})" class="label bg-primary-300">确认查看</a> `;
@@ -65,10 +65,14 @@
                 $.each(setting.json.badge,function (k,v){$(`.badge_${k}`).text(v);});
             }
         });
+
+        $('.search').click(function(){
+            load_notice_project_data();
+        });
     });
 
     function load_notice_project_data(){
-        NoticeProject.fnReloadAjax('/notices/get_notices_project_items_page/project?_=' + Math.random());
+        NoticeProject.fnReloadAjax('/message/notify/load_data/project?' + $('.frm_search').serialize());
     }
 
 </script>

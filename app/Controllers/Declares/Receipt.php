@@ -152,7 +152,7 @@ class Receipt extends Base
             // 保存新的资金单
             if ( $this->db->save( $receipt_data ) ) {
                 // @balancelog_end($model->projectid,($model->usage == 1 ? '外汇收入':($model->usage == 2 ? '其他收入':($model->usage == 3 ? '退税收入':''))),$model->customerid);
-                return $this->toJson('转入成功');
+                return $this->toJson(['msg'=>'转入成功','projectid'=>$P['projectid']]);
             }
             return $this->setError('输入失败');
         }
@@ -176,10 +176,7 @@ class Receipt extends Base
             // 保存操作
             if ( $this->request->getMethod() == 'post' ) {
                 $receipt_data['transfertext'] = 'TRANSFER';     // 转出标识
-                if ( empty($receipt_data['copysessionid']) || $receipt_data['copysessionid'] == 0 ) {
-                    $receipt_data['copysessionid'] = $receipt_data['id'];
-                    $this->db->save( $receipt_data );
-                }
+
                 $old_project_id = $receipt_data['projectid'];
                 $valid_amount = $this->_available_receipt_balance( $receipt_data['id'] );
 
@@ -187,7 +184,14 @@ class Receipt extends Base
                     return $this->toJson('可转金额不足,可转金额:(' . number_format($valid_amount) . ')');
                 }
 
+                if ( empty($receipt_data['copysessionid']) || $receipt_data['copysessionid'] == 0 ) {
+                    $receipt_data['copysessionid'] = $receipt_data['id'];
+                    $receipt_data['transfer_amount'] = $P['amount'];
+                    $this->db->save( $receipt_data );
+                }
+                $receipt_data['transfer_amount'] = 0;
                 if ( !$receipt_data['usage'] ) $receipt_data['usage'] = 2;
+
                 $receipt_data['amount'] = (-1) * $P['amount'];
                 $receipt_data['transfer'] = 1;
                 $receipt_data['copysessionid'] = $receipt_data['id'];
@@ -199,6 +203,7 @@ class Receipt extends Base
                     $project_db->save(['id'=>0,'customerid'=>$project_data['customerid'],'status'=>1,'isentrance' => $project_data['isentrance']]);
                     $P['projectid'] = $project_db->getInsertID();
                 }
+
                 // 新业务
                 $new_project_data = $project_db->where('id',$P['projectid'])->first();
                 // 操作
@@ -346,7 +351,7 @@ class Receipt extends Base
             $P['realityamount'] = $P['value'];
             $P['realityDate'] = date('Y-m-d');
             if ($this->db->save($P)) {
-                log_message('error',$this->db->getLastQuery());
+                //log_message('error',$this->db->getLastQuery());
                 return $this->toJson('实际退税已设置成功！');
             }
         }

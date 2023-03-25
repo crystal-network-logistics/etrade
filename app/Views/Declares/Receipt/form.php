@@ -8,7 +8,7 @@ $isentrance = isset( $data['isentrance'] ) ? $data['isentrance'] : 0;
     <input type="hidden" name="id" value="0">
     <input type="hidden" name="projectid" value="<?=$projectId?>">
     <input type="hidden" name="customerid" value="<?=$customerId?>">
-    <input type="hidden" name="isentrance" value="<?=$isentrance??0?>">
+    <input type="hidden" name="isentrance" value="<?=$isentrance?:0?>">
 
     <div>
         <div class="row">
@@ -101,7 +101,8 @@ $isentrance = isset( $data['isentrance'] ) ? $data['isentrance'] : 0;
     $(fname).toSubmit({success : function (resp){
             comm.Alert(resp.msg,true);
             comm.closeModal();
-            if ( window.load_receipts_data ) load_receipts_data();
+            if ( window.load_receipts_data )
+                load_receipts_data();
         },error:function (resp){
             comm.Alert(resp.msg,false)
         }});

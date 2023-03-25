@@ -71,14 +71,31 @@ $is_has_delete = ck_action('declares/project/delete');
     $(function(){
         dtproducts = comm.dt({
             ele:$('.data-list'),
+            sort:true,
+            order:[[9,'desc'],[1,'desc'],[2,'asc'],[5,'desc'],[10,'desc']],
             url:'/declares/project/page?'+$('.frm_search').serialize(),
             columns:['rownum','BusinessID','entryport','exportdate','currency','bgamount','vcapital','isreceipt','payamount','createtime','donetime','remark'],
             columnDefs:[
                 {
+                    aTargets:[0,4],
+                    mRender:function(data,full){
+                        return data
+                    },
+                    orderable:false
+                },
+                {
+                    aTargets:[9,10],
+                    mRender:function(data,full){
+                        return data
+                    },
+                    orderable:true
+                },
+                {
                     aTargets:[1],
                     mRender:function(data,full){
                         return '<a  href="/declares/import/view?id='+ full.ID +'" lang="'+ data +'">' + comm.ellipsis(data,data,125) + '</a>'
-                    }
+                    },
+                    orderable:true
                 },
                 {
                     aTargets:[2],
@@ -86,20 +103,31 @@ $is_has_delete = ck_action('declares/project/delete');
                         var sText = (data?comm.dictionary(__CITYEN,data):""),eText = (full.destionationcountry ? comm.dictionary(__COUNTRYEN,full.destionationcountry):'')
                         var text = (sText?sText:'') + ((sText&&eText)?'->':'--') + (eText?eText:'');
                         return comm.ellipsis( text ,text ,120 );
-                    }
+                    },
+                    orderable:true
                 },
                 {
                     aTargets:[11],
                     mRender:function(data,full){
                         return comm.ellipsis( data ,data ,110 );
-                    }
+                    },
+                    orderable:false
                 },
                 {
-                    aTargets:[6,7,8,5],
+                    aTargets:[6,7,8],
                     mRender:function(data,full){
                         var text = comm.fMoney(data,2);
                         return comm.ellipsis(text,text,80);
-                    }
+                    },
+                    orderable:false
+                },
+                {
+                    aTargets:[5],
+                    mRender:function(data,full){
+                        var text = comm.fMoney(data,2);
+                        return comm.ellipsis(text,text,80);
+                    },
+                    orderable:true
                 },
                 {
                     aTargets:[12],
@@ -116,7 +144,8 @@ $is_has_delete = ck_action('declares/project/delete');
                         }
                         <?php endif;?>
                         return buttons + '</div>';
-                    }
+                    },
+                    orderable:false
                 }
             ],
 

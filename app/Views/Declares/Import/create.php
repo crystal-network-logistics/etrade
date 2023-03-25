@@ -63,7 +63,6 @@
 
 <script>
     function jump_page( resp ){
-        //comm.Alert(resp.msg)
         setTimeout(()=>{
             window.location.href = `/declares/import/view?id=${resp.projectid}`
         },3000);

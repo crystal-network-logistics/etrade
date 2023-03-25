@@ -16,6 +16,9 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
     $has_project_download = ck_action('declares/project/download_entry');
     // 上传通关单权限
     $has_project_upload_entry = ck_action('declares/project/upload_entry');
+
+    // 撤消
+    $is_has_rollback = ck_action('declares/project/rollback');
 ?>
 <div class="panel-body">
     <form class="entity">
@@ -209,8 +212,6 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
         <div class="row" id="products" style="<?=$expanded?'overflow-x: hidden;overflow-y:auto;max-height: 300px;':''?>">
             <?=view('/Declares/Goods/vitem')?>
         </div>
-
-
         <div class="row">
             <div class="col-md-6">
                 <div class="img-box full min_up" style="margin-bottom: 0px;">
@@ -292,7 +293,7 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
                 <?php if ( $entry["status"] == 2 ):?>
                     <a class="btn btn-primary" href="/declares/project/confirm_file?id=<?=$project['ID']?>" onclick="return comm.confirmCTL(this.href,'是否确认报关资料?',(resp)=>{setTimeout(()=>{window.location.reload()},3000)})" lang="上传报关委托书">确认报关资料</a>
                 <?php else :?>
-                    <a class="btn btn-primary hModal" href="/declares/project/upload_entry?id=<?=$entry['id']?>" lang="确认并上传预录单">
+                    <a class="btn btn-primary hModal" href="/declares/project/upload_entry?id=<?=$entry['id']?>" lang="确认并上传预录单" data-call="comm.reload_page" >
                         上传预录单
                     </a>
                 <?php endif;?>
@@ -305,7 +306,7 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
 
                 <?php if ( $entry["status"] > 1 && $entry["status"] != 2 && ( strlen( $entry["authdeclar"] ) == 0 || strlen( $entry["clearance"] ) == 0 ) ): ?>
                     <!--确认通关 操作-->
-                    <a href="/declares/project/upload_entry?id=<?=$entry['id']?>" class="btn btn-primary hModal" lang="确认并上传预录单"> 确认通关 </a>
+                    <a href="/declares/project/upload_entry?id=<?=$entry['id']?>" class="btn btn-primary hModal" lang="确认并上传预录单" data-call="comm.reload_page"> 确认通关 </a>
                 <?php endif;?>
 
             <?php endif;?>
@@ -318,5 +319,9 @@ $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST[
         <?php if($data['entry']  && $entry["status"] != 5 ) {?>
             <a class="btn btn-primary" href="/declares/project/downbooking?id=<?=$project["ID"]?>" target="_blank">下载托书</a>
         <?php }?>
+
+        <?php if ( $is_has_rollback && $project['status'] == 2 ):?>
+            <a class="btn btn-danger" href="/declares/project/rollback?id=<?=$project["ID"]?>"  onclick="return comm.confirmCTL(this.href,'确定撤消回退操作?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })"><i class="icon icon-forward"></i> 撤销完成 </a>
+        <?php endif;?>
     </form>
 </div>

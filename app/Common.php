@@ -122,19 +122,16 @@ function where_auth(){
     $Ids = [];
     if ( ckAuth() ) {
         $Ids[] = session('custId');
-    } else if ( $operator_data = $db->asArray()->from('operator',true)->where('userid',session('id'))->findAll() ) {
-        foreach ( $operator_data as $item ) {
-            $Ids[] = $item['customerid'];
-        }
     } else {
-        if ( session('company') ) {
+        $operator_data = $db->asArray()->from('operator',true)->where('userid',session('id'))->findAll();
+        if ( $operator_data ) {
+            foreach ( $operator_data as $item ) $Ids[] = $item['customerid'];
+        }
+        if ( hasRole(['admin','finance','sa']) && session('company') ) {
             $customer_data = $db->asArray()->from('customer', true)->where('companyid', session('company'))->findAll();
-            foreach ($customer_data as $item) {
-                $Ids[] = $item['id'];
-            }
+            foreach ($customer_data as $item) $Ids[] = $item['id'];
         }
     }
-    //log_message('error',"auth:".$db->getLastQuery());
     return $Ids;
 }
 
@@ -143,7 +140,7 @@ function ckAuth( $auth = 'customer'){
     if ( $auth !== false && $auth == 'customer' ) return session('power') === $auth;
 
     if ( $auth === false ) {
-        return hasRole(['admin','finance','operator','invoicer','sa']);
+        return hasRole(['admin','finance','operator','invoicer','sa','agent']);
     }
     return hasRole( $auth );
 }
@@ -151,7 +148,6 @@ function ckAuth( $auth = 'customer'){
 // 是否包含角色
 function hasRole( $code ,$userId = 0 ){
     $db = new \App\Models\Admin\Roles();
-    $self = session('id') == $userId;
     if ( in_array(session('power'),['all','admin','sa']) ) return true;
     is_array( $code ) ? $db->whereIn('a.code',$code ) : $db->where('a.code',$code );
     $data = $db->from('admin_roles as a', true)->join('admin_users_role as b', 'a.id=b.role_id', 'left')
@@ -266,4 +262,9 @@ function ck_mobile( $str ) {
 // 检测邮箱是否正确
 function ck_email( $email ){
     return preg_match( "/^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@([a-zA-Z0-9]+[-.])+([a-z]{2,5})$/ims" ,$email ) ;
+}
+
+function getMillisecond() {
+    list($microsecond , $time) = explode(' ', microtime()); //' '中间是一个空格
+    return (float)sprintf('%.0f',(floatval($microsecond)+floatval($time))*1000);
 }

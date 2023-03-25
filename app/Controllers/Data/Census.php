@@ -365,7 +365,7 @@ class Census extends Base {
             LibComm::ExportExcel(['客户', '业务单号', '付款日期', '类型','币种','汇率','金额','折RMB'],$data);return false;
         } else {
             $data = $db->paginates( $this->_page(), $this->_size() );
-            log_message('error',$db->getLastQuery());
+            // log_message('error',$db->getLastQuery());
             $sum_data = $db->asArray()->select("sum(v.total_amount) as amount")
                 ->join('customer as c','project.customerid=c.id')
                 ->join("($sql) as v",'v.projectid=project.id','inner')

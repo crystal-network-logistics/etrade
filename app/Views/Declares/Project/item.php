@@ -128,9 +128,18 @@
     <div class="panel">
         <div class="panel-heading bg-<?=!$project['isentrance']?'indigo-300':'primary'?>" style="border-radius: 3px;">
             <h6 class="panel-title">
-                <span class="statisticsleft"> <span>本单毛利</span><span>(<span id="maoli"><?php echo number_format((($project?$project['ymt_amount']:0) - ($project?$project['paymnet_cl_amount']:0)) + ($project?($project['usd']*$project['rate']):0),2)?></span>)</span></span>
+                <?php
+                    $ml = (($project?$project['ymt_amount']:0) - ($project?$project['paymnet_cl_amount']:0)) + ($project?($project['usd']*$project['rate']):0);
+                    $tooltip = '';
+                    if ( session('id') && hasRole('agent') ) {
+                        $user_data = \App\Libraries\LibForm::user(['id' => session('id')]);
+                        $amount = number_format( $ml * ($user_data["percentage"]?:0) / 100 , 2) ;
+                        $tooltip = "data-popup='tooltip' data-html='true' title='本单毛利提成 {$user_data["percentage"]}%,共:RMB {$amount}'";
+                    }
+                ?>
+                <span class="statisticsleft" <?=$tooltip?> > <span>本单毛利</span><span>(<span id="maoli"><?php echo number_format( $ml ,2 )?></span>)</span></span>
                 <span class="statisticsleft"><span>=</span><span></span></span>
-                <span class="statisticsleft"><span><?= $company?($company['shortname']?$company['shortname']:$company['name']):'一贸通' ?>收款</span><span>(<?php echo number_format(($project?$project['ymt_amount']:0),2)?>)</span></span>
+                <span class="statisticsleft"><span><?= $company?($company['shortname']?:$company['name']):'一贸通' ?>收款</span><span>(<?php echo number_format(($project?$project['ymt_amount']:0),2)?>)</span></span>
                 <span class="statisticsleft"><span>-</span><span></span></span>
                 <span class="statisticsleft"><span>成本支付总额</span><span>(<?php echo number_format($project?$project['paymnet_cl_amount']:0 ,2)?>)</span></span>
                 <span class="statisticsleft"><span>+</span><span></span></span>

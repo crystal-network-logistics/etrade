@@ -23,7 +23,7 @@
                     <input name="Goods[productid][]" type="hidden" value="<?=$row["productid"]?>">
                 </div>
                 <!--padding-left:20px;padding-right:20px-->
-                <div class="customrow" style="margin-bottom: 0px;">
+                <div class="customrow" style="margin-bottom: 0px;border-radius: 0;">
                     <table style="width: 100%;min-width: 980px;">
                         <thead style="background-color:rgb(210,220,233)"><tr>
                             <th style="padding:5px">最大包装件数</th>
@@ -46,7 +46,7 @@
                             <td style="padding:5px"><?=number_format($row["ProductGrossWeight"],2)?> <?php $pgw += $row["ProductGrossWeight"]?></td>
                             <td style="padding:5px"><?=number_format($row["ProductAmount"],2)?><?php $pa += $row["ProductAmount"]?></td>
                             <td style="padding:5px"><?=(is_numeric($row["productunit"])?\App\Libraries\LibComm::Unit($row["productunit"]):$row["productunit"])?></td>
-                            <td style="padding:5px"><?=number_format($row["ProductUnitPrice"],2) ?></td>
+                            <td style="padding:5px"><?=number_format($row["ProductUnitPrice"],4) ?></td>
                             <td style="padding:5px;color:red" id="sum<?=$tag?>">
                                 <?=number_format( $row['ProductUnitTotalPrice']??( $row["ProductAmount"] * $row["ProductUnitPrice"] ),2)?>
                                 <?php $sum += ( $row['ProductUnitTotalPrice']??($row["ProductAmount"] * $row["ProductUnitPrice"]) ); ?></td>

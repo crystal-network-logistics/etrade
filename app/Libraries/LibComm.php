@@ -11,23 +11,27 @@ class LibComm {
      * */
     static function Captcha(){
         session_start();
+        //设置需要随机取的值,去掉容易出错的值如0和o
+        $data ='abcdefghigkmnpqrstuvwxy123456789ABCDEFGHIJKLMNPQRSTUVWSYZ';
         $image = imagecreatetruecolor(100, 35);    //1>设置验证码图片大小的函数
-        //5>设置验证码颜色 imagecolorallocate(int im, int red, int green, int blue);
+        // 5>设置验证码颜色 imagecolorallocate(int im, int red, int green, int blue);
         $bgcolor = imagecolorallocate($image,255,255,255); //#ffffff
-        //6>区域填充 int imagefill(int im, int x, int y, int col) (x,y) 所在的区域着色,col 表示欲涂上的颜色
+        // 6>区域填充 int imagefill(int im, int x, int y, int col) (x,y) 所在的区域着色,col 表示欲涂上的颜色
         imagefill($image, 0, 0, $bgcolor);
         //10>设置变量
         $captcha_code = "";
+        function gen_char($data) {
+            $char = substr($data, rand(0,strlen($data) - 1),1);
+            return $char?:gen_char($data);
+        }
         //7>生成随机的字母和数字
         for($i=0;$i<4;$i++){
             //设置字体大小
             $fontsize = 18;
             //设置字体颜色，随机颜色
             $fontcolor = imagecolorallocate($image, rand(0,120),rand(0,120), rand(0,120));      //0-120深颜色
-            //设置需要随机取的值,去掉容易出错的值如0和o
-            $data ='abcdefghigkmnpqrstuvwxy123456789ABCDEFGHIJKLMNPQRSTUVWSYZ';
             //取出值，字符串截取方法  strlen获取字符串长度
-            $fontcontent = substr($data, rand(0,strlen($data)),1);
+            $fontcontent = gen_char($data);
             //10>.=连续定义变量
             $captcha_code .= $fontcontent;
             //设置坐标
@@ -298,61 +302,61 @@ $obj->getActiveSheet(0)->setTitle(date('YmdHis'));   //设置sheet名称
     );
 
     public static $tipic = array(
-        'TOPIC_NEW_USR'=>'新用户注册',
-        'TOPIC_APPROVE_PRODUCT'=>'待审核产品',
-        'TOPIC_CONFIRM_PRODUCT'=>'产品待确认',
-        'TOPIC_SUPPLEMENT_MATERIAL'=>'产品待补充资料',
-        'TOPIC_APPROVED_PRODUCT'=>'产品审核通过',
+        'TOPIC_NEW_USR'=>['name' => '新用户注册', 'status' => 1 ],
+        'TOPIC_APPROVE_PRODUCT'=> ['name' => '待审核产品' , 'status' => 1],
+        'TOPIC_CONFIRM_PRODUCT'=>['name' => '产品待确认' , 'status' => 2],
+        'TOPIC_SUPPLEMENT_MATERIAL'=>['name'=>'产品待补充资料', 'status'=>4],
+        'TOPIC_APPROVED_PRODUCT'=>['name'=>'产品审核通过','status' => 3],
 
-        'TOPIC_APPROVE_INVOICER'=>'待审核开票人',
-        'TOPIC_REJECTED_INVOICER'=>'开票人审核拒绝',
-        'TOPIC_APPROVED_INVOICER'=>'开票人审核通过',
+        'TOPIC_APPROVE_INVOICER'=>['name'=>'待审核开票人','status' => 1],
+        'TOPIC_REJECTED_INVOICER'=>['name'=>'开票人审核拒绝','status' =>2],
+        'TOPIC_APPROVED_INVOICER'=>['name'=>'开票人审核通过','status' => 3],
 
-        'TOPIC_APPROVE_ENTRYFORM'=>'待审核报关资料',
-        'TOPIC_APPROVED_ENTRYFORM'=>'报关资料审核通过',
-        'TOPIC_RETURNED_ENTRYFOM'=>'报关资料退单修改',
-        'TOPIC_CONFIRM_CLEARANCE'=>'确认通关',
-        'TOPIC_DOWNLOADED_ENTRYFORM'=>'下载报关资料',
+        'TOPIC_APPROVE_ENTRYFORM'=>['name'=>'待审核报关资料','status' => 2],
+        'TOPIC_APPROVED_ENTRYFORM'=>['name'=>'报关资料审核通过','status' => 3],
+        'TOPIC_RETURNED_ENTRYFOM'=>['name'=>'报关资料退单修改','status' => 1],
+        'TOPIC_CONFIRM_CLEARANCE'=>['name'=>'确认通关','status' => 5],
+        'TOPIC_DOWNLOADED_ENTRYFORM'=>['name'=>'下载报关资料','status' => 3],
 
-        'TOPIC_ENTRYFORM_ARCHIVES'=>'提交备案单据',
-        'TOPIC_ENTRYFORM_ARCHIVES_APPROVE'=>'备案单据审核通过',
+        'TOPIC_ENTRYFORM_ARCHIVES'=>['name'=>'提交备案单据','type'=>1],
+        'TOPIC_ENTRYFORM_ARCHIVES_APPROVE'=>['name'=>'备案单据审核通过','type'=>2],
 
-        'TOPIC_APPROVE_VII'=>'待审核增票',
-        'TOPIC_CONFIRMED_VII'=>'确认增票',
-        'TOPIC_CONFIRM_VII'=>'待确认增票',
-        'TOPIC_APPLY_VII'=>'申请查看增票',
-        'TOPIC_UPLOADED_VII'=>'新上传增票',
-        'TOPIC_TRANSFERED_VII'=>'增票转出',
+        'TOPIC_APPROVE_VII'=>['name'=>'待审核增票','status'=>1],
+        'TOPIC_CONFIRMED_VII'=>['name'=>'确认增票','status' =>3],
+        'TOPIC_CONFIRM_VII'=>['name'=>'待确认增票','status'=>2],
+        'TOPIC_APPLY_VII'=>['name'=>'申请查看增票','status'=>4],
+        'TOPIC_UPLOADED_VII'=>['name'=>'新上传增票','status'=>5],
+        'TOPIC_TRANSFERED_VII'=>['name'=>'增票转出','status'=>''],
         // 'TOPIC_EDIT_CONFIRM_VII'=>'编辑或确认增票',
-        'TOPIC_APPLY_TAXREFUND'=>'申请退税',
-        'TOPIC_APPROVED_TAXREFUND'=>'批准退税',
-        'TOPIC_REJECTED_TAXREFUND'=>'新拒绝退税',
+        'TOPIC_APPLY_TAXREFUND'=>['name'=>'申请退税','taxrefund' => 3],
+        'TOPIC_APPROVED_TAXREFUND'=>['name'=>'批准退税','taxrefund'=>4],
+        'TOPIC_REJECTED_TAXREFUND'=>['name'=>'新拒绝退税','taxrefund'=>5],
 
-        'TOPIC_RECEIPTCLAIM'=>'收入申领',
-        'TOPIC_APPROVE_RECEIPT'=>'待审核收入',
+        'TOPIC_RECEIPTCLAIM'=>['name'=>'收入申领','status'=>0],
+        'TOPIC_APPROVE_RECEIPT'=>['name'=>'待审核收入','approved'=>0],
         //'TOPIC_RECEIPTCLAIM_APPROVE'=>'收入申领审核',
-        'TOPIC_NEW_RECEIPT'=>'新增收入',
-        'TOPIC_ALLOCATE_RECEIPT'=>'新分配收入',
-        'TOPIC_UPLOADED_BANK_RECEIPT'=>'上传收入水单',
-        'TOPIC_TRANSFERED_RECEIPT'=>'收入转出',
-        'TOPIC_APPLY_BANK_RECEIPT'=>'申请查看收入水单',
+        'TOPIC_NEW_RECEIPT'=>['name'=>'新增收入','approved' => 1],
+        'TOPIC_ALLOCATE_RECEIPT'=>['name'=>'新分配收入','status' => 1],
+        'TOPIC_UPLOADED_BANK_RECEIPT'=>['name'=>'上传收入水单','status' => 4],
+        'TOPIC_TRANSFERED_RECEIPT'=>['name'=>'收入转出'],
+        'TOPIC_APPLY_BANK_RECEIPT'=>['name'=>'申请查看收入水单','status' => 3],
 
-        'TOPIC_APPROVE_PAYMENT'=>'待审核支付',
-        'TOPIC_CONFIRM_PAYMENT'=>'确认支付',
-        'TOPIC_UPLOADED_BANK_PAYMENT'=>'上传支付水单',
-        'TOPIC_TRANSFER_PAYMENT'=>'支付转出',
-        'TOPIC_APPLY_BANK_PAYMENT'=>'申请查看支付水单',
+        'TOPIC_APPROVE_PAYMENT'=>['name'=>'待审核支付','status'=>0],
+        'TOPIC_CONFIRM_PAYMENT'=>['name'=>'确认支付','status' => 1],
+        'TOPIC_UPLOADED_BANK_PAYMENT'=>['name'=>'上传支付水单','status'=>3],
+        'TOPIC_TRANSFER_PAYMENT'=>['name'=>'支付转出','status' => ''],
+        'TOPIC_APPLY_BANK_PAYMENT'=>['name'=>'申请查看支付水单','status'=>2],
 
-        'TOPIC_APPROVE_PAYMENTCL'=>'待审核成本支付',
-        'TOPIC_CONFIRM_PAYMENTCL'=>'确认成本支付',
-        'TOPIC_TRANSFER_PAYMENTCL'=>'成本支付转出',
+        'TOPIC_APPROVE_PAYMENTCL'=>['name'=>'待审核成本支付','status'=>0],
+        'TOPIC_CONFIRM_PAYMENTCL'=>['name'=>'确认成本支付','status'=>1],
+        'TOPIC_TRANSFER_PAYMENTCL'=>['name'=>'成本支付转出','status'=>''],
 
-        'TOPIC_STAMP_ING'=>'待审核盖章',
-        'TOPIC_STAMP_ED'=>'盖章完成',
+        'TOPIC_STAMP_ING'=>['name'=>'待审核盖章','status'=>1],
+        'TOPIC_STAMP_ED'=>['name'=>'盖章完成','status' => 2],
     );
 
     public static function topic_text($key){
-        return self::$tipic[$key];
+        return self::$tipic[$key]['name'];
     }
 
     static function cny($num,$mode = true,$sim = true){

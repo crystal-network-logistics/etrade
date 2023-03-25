@@ -87,8 +87,7 @@ class Paymentcl extends Base {
 
             // 保存支付方式
             if ( $this->db->save( $P ) ) {
-                return $this->toJson('已保存成功!');
-                //@balancelog_end($param['projectid'],($param['type'] == 1 ? '货款支付':($param['type'] == 2 ? '运费支付':($param['type'] == 4 ? '费用支付':'其他支付'))));
+                return $this->toJson(['msg'=>'已保存成功!','projectid'=>$P['projectid']]);
             }
             return $this->setError('保存失败');
         }
@@ -99,7 +98,7 @@ class Paymentcl extends Base {
             $data = $payment_data;
         }else {
             // 输出视图数据
-            $data = ['projectid' => $P['projectid'], 'customerid' => $P['customerid'], 'isentrance' => 0];
+            $data = ['projectid' => $P['projectid'], 'customerid' => $P['customerid'], 'isentrance' => $P['isentrance'] ];
         }
         // 加载视图
         return $this->render(

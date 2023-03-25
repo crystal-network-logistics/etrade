@@ -8,7 +8,7 @@ div[name=cld] {border-radius: 5px;border: 1px solid white;}
 div[name=cld]:hover{  background-color: #f3f1f1;border: 1px solid rgb(175,204,238)}
 .form-group label{font-weight: bold;}
 .customtextbox{margin-right:10px;}
-.customrow{overflow:auto;margin-bottom:10px;}
+.customrow{overflow:auto;margin-bottom:10px;/*border-radius: 3px;*/}
 .customtextbox input , select , .customrow input select ,.customrow table>tbody>tr>td>input{border: 1px solid #eee; padding: 3px 5px; border-radius: 2px;}
 .idblock{background-color:rgb(175,204,238);float:left;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}
 .productname{padding-left:20px;padding-top:5px;float:left;}

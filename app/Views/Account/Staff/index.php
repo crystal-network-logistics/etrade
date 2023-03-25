@@ -5,6 +5,7 @@
 <div class="content">
     <div class="panel panel-flat">
         <div class="panel-body">
+
             <form action="#" class="frm_search form-horizontal">
                 <div class="row">
                     <div class="col-md-12">
@@ -19,10 +20,12 @@
 
                         <?=\App\Libraries\LibComp::get_customer(['name'=>'customerid','class'=>'select inline selects-220'])?>
                         <!--input name="type" type="hidden" value="ent"-->
-                        <button class="btn btn-primary search" type="button" onclick="load_data();">查询</button>
+                        <button class="btn btn-primary search" type="button" onclick="load_data();"> <i class="icon icon-search4"></i> 查询 </button>
                         </div>
+
                         <?php if(ck_action('account/staff/create')):?>
-                            <a class="btn btn-success hModal" href="/account/staff/create">新增</a> &nbsp;
+                            <a class="btn btn-success hModal" href="/account/staff/create"> <i class="icon icon-add"></i> 新增员工 </a>
+                            <a class="btn btn-info hModal" href="/account/staff/agent"> <i class="icon icon-add"></i> 新增代理 </a>
                         <?php endif;?>
 
                     </div>
@@ -107,16 +110,20 @@
                             <?php endif;?>
 
                             <?php if(ck_action('account/staff/spasswd')):?>
-                            buttons += '    <a href="/account/staff/spasswd?id='+ full.id +'" class="label bg-primary-300" onclick="return comm.doPrompt(this.href,{title:\'请输入新密码:\',type:\'password\'})">重置</a>';
+                            buttons += '    <a href="/account/staff/spasswd?id='+ full.id +'" class="label bg-info-300" onclick="return comm.doPrompt(this.href,{title:\'请输入新密码:\',type:\'password\'})">重置</a>';
                             <?php endif;?>
 
                             <?php if(ck_action('account/staff/edit')):?>
-                            buttons += '    <a href="/account/staff/edit?id='+ full.id +'" class="label bg-primary-300 hModal">编辑</a>';
+                            var action = 'edit' , text = '编辑';
+                            if ( full.role.includes('代理') ) {
+                                action = 'agent';
+                            }
+                            buttons += `    <a href="/account/staff/${action}?id=${full.id}" class="label bg-primary-300 hModal">${text}</a>`;
                             <?php endif;?>
 
-                            <?php if(ck_action('account/staff/delete')):?>
-                            buttons += '    <a href="/account/staff/delete?id='+ full.id +'" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,\'确定删除?\')">删除</a>';
-                            <?php endif;?>
+                            if ( full.role.includes('操作人员') ) {
+                                buttons += `    <a href="/account/staff/binder?id=${full.id}" class="label bg-primary-300 hModal" data-yes="N">查看</a> `;
+                            }
 
                             return buttons + '</div>';
                         }

@@ -18,8 +18,8 @@ $is_has_delete = ck_action('declares/project/delete');
                             <?php if ( ckAuth(false ) ) :?>
                             <?=\App\Libraries\LibComp::get_customer(['name'=>'customerid','class'=>'select inline selects-220'])?>
                             <?php endif;?>
-                            <!--input type="text" class="form-control inline input-120" placeholder="开始 出口日期" onclick="WdatePicker({})"-->
-                            <!--nput type="text" class="form-control inline input-120" placeholder="结束 出口日期" onclick="WdatePicker({})"-->
+<!--                            <input type="text" class="form-control inline input-120" placeholder="开始 出口日期" onclick="WdatePicker({})">-->
+<!--                            <nput type="text" class="form-control inline input-120" placeholder="结束 出口日期" onclick="WdatePicker({})">-->
 
                             <input type="text" class="form-control inline input-320" name="keys" placeholder="业务编号,备注等" value="">&nbsp;
                             <button type="button" class="btn btn-primary search" id="btn_search" onclick="load_data();"><i class="icon icon-search4"></i> 查询</button>
@@ -75,22 +75,21 @@ $is_has_delete = ck_action('declares/project/delete');
         dtproducts = comm.dt({
             ele:$('.data-list'),
             sort:true,
-            order:[[10,'desc'],[1,'desc'],[11,'desc']], //[2,'desc'],[3,'desc'],[4,'desc'],
+            order:[[10,'desc'],[11,'desc'],[1,'desc'],[2,'asc'],[3,'desc'],[6,'desc'],[12,'desc']],//,[4,'desc'],
             url:'/declares/project/page?'+$('.frm_search').serialize(),
             columns:['rownum','BusinessID','entryport','exportdate','currency','clearance','bgamount','vcapital','isreceipt','payamount','createtime','donetime','remark'],
             columnDefs:[
                 {
-                    aTargets:[0,3,4],
+                    aTargets:[0,4],
                     mRender:function(data,full){
                         return data;
                     },
                     orderable:false
                 },
-
                 {
                     aTargets:[1],
                     mRender:function(data,full){
-                        return `<a  href="/declares/project/view?id=${full.ID}" target="_blank">${comm.ellipsis(data,data,125)}</a>`
+                        return `<a  href="/declares/project/view?id=${full.ID}" target="_blank">${comm.ellipsis(data,data,135)}</a>`
                     },
                     orderable:true
                 },
@@ -101,14 +100,14 @@ $is_has_delete = ck_action('declares/project/delete');
                         var text = (sText?sText:'') + ((sText&&eText)?'->':'') + (eText?eText:''),tip = '启运港:' + (sText?sText:'') + ((sText&&eText)?' , ':'') + '目的港:' + (eText?eText:'');
                         return comm.ellipsis( text ,tip ,120 );
                     },
-                    orderable:false
+                    orderable:true
                 },
                 {
                     aTargets:[12],
                     mRender:function(data,full){
                         return comm.ellipsis( data ,data ,110 ,'left');
                     },
-                    orderable:false
+                    orderable:true
                 },
 
                 {
@@ -120,7 +119,7 @@ $is_has_delete = ck_action('declares/project/delete');
                     orderable:false
                 },
                 {
-                    aTargets:[6,7,8,9],
+                    aTargets:[7,8,9],
                     mRender:function(data,full){
                         var text = comm.fMoney(data,2);
                         return comm.ellipsis(text,text,80);
@@ -128,18 +127,24 @@ $is_has_delete = ck_action('declares/project/delete');
                     orderable:false
                 },
                 {
+                    aTargets:[6],
+                    mRender:function(data,full){
+                        var text = comm.fMoney(data,2);
+                        return comm.ellipsis(text,text,80);
+                    },
+                    orderable:true
+                },
+                {
                     aTargets:[13],
                     mRender:function(data,full){
                         var buttons = ' <div class="text-right">',status = full.status;
 
-                        buttons += ` <a href="/declares/project/view?id=${full.ID}" class="label bg-primary"> 详情 </a> `;
+                        buttons += ` <a href="/declares/project/view?id=${full.ID}" class="label bg-primary" target="_blank"> 详情 </a> `;
 
+                        var del = `    <a href="/declares/project/delete?id=${full.ID}" class="label bg-danger-300" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
                         <?php if( $has_admin ) : ?>
-                            buttons += `    <a href="/declares/project/delete?id=${full.ID}" class="label bg-danger" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
-                        <?php else: ?>
-                            if ( status == 0 ) {
-                                buttons += `    <a href="/declares/project/delete?id=${full.ID}" class="label bg-danger" onclick="return comm.confirmCTL(this.href,'确定删除?')">删除</a>`;
-                            }
+                            buttons += del
+                        <?php else: ?> if ( status == 0 ) buttons += del;
                         <?php endif;?>
                         return buttons + '</div>';
                     }
@@ -187,7 +192,7 @@ $is_has_delete = ck_action('declares/project/delete');
                 }
                 window.location.href = '/declares/project/create?cid=' + custId
             })
-        },1000)
+        },1000);
     });
 
     // 回车查询

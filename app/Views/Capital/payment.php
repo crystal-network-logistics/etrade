@@ -11,8 +11,8 @@
                     <li class="active"><a href="#" data-toggle="tab" data-info=""> 全部支付</a></li>
                     <li><a href="#" data-toggle="tab" data-info="1"> 货款支付 </a></li>
                     <li><a href="#" data-toggle="tab" data-info="2"> 运费支付 </a></li>
-                    <li><a href="#" data-toggle="tab" data-info="3"> 费用支付 </a></li>
-                    <li><a href="#" data-toggle="tab" data-info="4"> 其它支付 </a></li>
+                    <li><a href="#" data-toggle="tab" data-info="4"> 费用支付 </a></li>
+                    <li><a href="#" data-toggle="tab" data-info="3"> 其它支付 </a></li>
                 </ul>
             </div>
             <form class="form-horizontal frm_payment nav-search" style="margin-top: 5px;">

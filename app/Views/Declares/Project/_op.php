@@ -2,7 +2,8 @@
     $CustomerID = ckAuth() ? session('custId') : (isset($_REQUEST['cid'])?$_REQUEST['cid']:'');
     if($data['project']) $CustomerID = $project["customerid"];
     $user = \App\Libraries\LibForm::user(['customerid'=>$CustomerID]);
-    $owner = \App\Libraries\LibForm::owner($CustomerID);
+    $owner = (array) \App\Libraries\LibForm::owner($CustomerID);
+
     $cust_data = \App\Libraries\LibForm::customer(['id'=>$CustomerID]);
 ?>
 <div class="panel panel-flat table-responsive">
@@ -38,10 +39,10 @@
 
                 <td><div data-popup="tooltip" data-html="true" title="客户编号:<?php echo $cust_data?$cust_data['customerno']:'';?> <br /> 客户名称: <?php echo $cust_data?$cust_data['customername']:'';?>"><?php echo $cust_data?$cust_data['customerno']:''?></div></td>
                 <td>
-                    <div data-popup="tooltip" data-html="true" title="姓名: <?php echo $user?($user["realname"]?$user["realname"]:($user["nickname"]??$user["username"])):''?>
+                    <div data-popup="tooltip" data-html="true" title="姓名: <?php echo $user?($user["realname"]?:($user["nickname"]?:$user["username"])):''?>
                         邮箱:<?php echo $user?$user['email']:''?>
                         电话:<?php echo $user?$user["tel"]:''?><br />QQ:<?php echo $user?$user["qq"]:''?>">
-                        <?php echo $user?($user["realname"]?$user["realname"]:($user["nickname"]?$user["nickname"]:$user["username"])):''?>
+                        <?php echo $user?($user["realname"]?:($user["nickname"]?:$user["username"])):''?>
                     </div>
                 </td>
 
@@ -49,7 +50,7 @@
                     <div data-popup="tooltip"
                          data-html="true"
                          title="
-                         姓名:<?php echo $owner?($owner['realname']?$owner['realname']:$owner['nickname']):''?><br />
+                         姓名:<?php echo $owner?($owner['realname']?:$owner['nickname']):''?><br />
                          邮箱:<?php echo $owner?$owner['email']:''?><br />电话:<?php echo $owner?$owner['tel']:''?><br />
                          QQ:<?php echo $owner?$owner['qq']:''?>">
                         <?php echo $owner?($owner['realname']?$owner['realname']:$owner['username']):''?>

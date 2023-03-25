@@ -60,7 +60,7 @@ $stamper_png = base64_image_data( $company['stamp_zh_en'] );
                 <?php echo $row["name"].' '. $row["ProductEnglishName"]?:$row["englishname"]; ?>
             </td>
             <td align="center" style="text-align: center;vertical-align:middle;border-right:1px solid black"><?=$row["ProductAmount"]. ' '.(is_numeric($row["productunit"])?(\App\Libraries\LibComm::Unit($row["productunit"])):$row["productunit"]) ?></td>
-            <td align="center" style="text-align: center;vertical-align:middle;border-right:1px solid black"><?=number_format($row["ProductUnitPrice"],2)?></td>
+            <td align="center" style="text-align: center;vertical-align:middle;border-right:1px solid black"><?=number_format($row["ProductUnitPrice"],4)?></td>
             <td align="center" style="border-right:1px solid black;text-align: center;vertical-align:middle;">
                 <?php $tmp = $row["ProductUnitTotalPrice"] ?? ($row["ProductUnitPrice"]*$row["ProductAmount"]); $total+=$tmp;
                 echo number_format($tmp,2); ?>

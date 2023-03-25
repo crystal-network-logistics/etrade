@@ -13,13 +13,17 @@ class Operator extends \App\Models\BaseModel {
         $argc = [];
         // 循环
         foreach ( $userIds as $k => $v ) {
-            $argc[] = [
-                'id'=>0,
-                'customerid' => $customerId,
-                'userid' => $v
-            ];
+            $argc[] = ['id'=>0,'customerid' => $customerId,'userid' => $v];
         }
-        //
+        $this->insertBatch($argc);
+    }
+
+    // 绑定客户
+    public function batch_bind( $userId = 0,$customerIds = []){
+        $this->where('userid',$userId)->delete();$argc = [];
+        foreach ( $customerIds as $k => $v ) {
+            if ( $v ) $argc[] = ['id'=>0,'customerid' => $v,'userid' => $userId];
+        }
         $this->insertBatch($argc);
     }
 }

@@ -9,9 +9,11 @@ $is_has_payment_approve = ck_action('declares/payment/approve');
 $is_has_payment_apply = ck_action('declares/payment/apply');
 $is_has_payment_delete = ck_action('declares/payment/delete');
 
-$is_has_confirm_payment_con = confirm_payment( $data );
+$is_has_confirm_payment_con = confirm_payment( $data , $data['project']['isentrance'] == 0 ? null : $data['project']['receiptsum']);
 // 确认付清
 $is_has_confirm_payment = ck_action('declares/project/confirm_payment');
+// 撤消
+$is_has_rollback = ck_action('declares/project/rollback')
 ?>
 <div class="content">
     <div class="panel">
@@ -45,6 +47,10 @@ $is_has_confirm_payment = ck_action('declares/project/confirm_payment');
                onclick="return _confirm(this.href,'是否确认付清?')">
                 确认付清
             </a>
+        <?php endif;?>
+
+        <?php if ( $is_has_rollback && $project['paymentstatus'] == 1 ):?>
+            <a class="btn btn-danger" href="/declares/project/rollback/payment?id=<?=$project["ID"]?>"  onclick="return comm.confirmCTL(this.href,'确定撤消付清操作?',(resp)=>{ setTimeout(()=>{window.location.reload()},3000) })"><i class="icon icon-forward"></i> 撤销付款付清 </a>
         <?php endif;?>
 
     </div>
@@ -192,10 +198,7 @@ $is_has_confirm_payment = ck_action('declares/project/confirm_payment');
                     }
                 },'json');
             }
-        })
-
-
-
+        });
         return false;
     }
 </script>
